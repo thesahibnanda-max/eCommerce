@@ -123,6 +123,16 @@ Create a **Web Service** from this repo on the Go runtime.
 
 With `PORT` set, the app serves the store and the API on that one port.
 
+### Continuous deploy
+
+Every push to `master` runs the tests, and if they pass, GitHub Actions triggers a Render deploy. A red commit never ships. To wire it up:
+
+1. In Render, open the service → **Settings** → copy the **Deploy Hook** URL.
+2. Save it as a repo secret: `gh secret set RENDER_DEPLOY_HOOK_URL` (paste the URL when asked).
+3. In Render, set **Auto-Deploy** to **Off**, so the hook is the only thing that deploys.
+
+Without the secret, the deploy step is skipped with a warning and CI stays green.
+
 ## Checkout, step by step
 
 1. Bag → Checkout. Pick or add an address.
@@ -206,7 +216,7 @@ cd frontend/web && npm test             # storefront
 npm run typecheck && npm run lint       # in frontend/web
 ```
 
-CI runs all of it on every push to `master`.
+CI runs all of it on every push to `master`, then deploys to Render if everything passed.
 
 ## Layout
 
