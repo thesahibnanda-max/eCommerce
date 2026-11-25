@@ -4,6 +4,7 @@ import {
   initialSelection,
   isOptionAvailable,
   optionGroups,
+  splitGroups,
   selectOption,
 } from './variants'
 
@@ -64,5 +65,20 @@ describe('variants', () => {
 
   it('starts on the cheapest in-stock variant', () => {
     expect(initialSelection(product)).toEqual({ color: 'Blue', size: 'M' })
+  })
+})
+
+describe('splitGroups', () => {
+  it('keeps real choices as buttons and single values as details', () => {
+    const result = splitGroups([
+      { name: 'size', values: ['S', 'M'] },
+      { name: 'colour', values: ['White & Black'] },
+      { name: 'power', values: ['USB rechargeable'] },
+    ])
+    expect(result.choices).toEqual([{ name: 'size', values: ['S', 'M'] }])
+    expect(result.details).toEqual([
+      { name: 'colour', value: 'White & Black' },
+      { name: 'power', value: 'USB rechargeable' },
+    ])
   })
 })

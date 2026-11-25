@@ -23,6 +23,7 @@ import {
   isOptionAvailable,
   optionGroups,
   selectOption,
+  splitGroups,
   type Selection,
 } from './variants'
 import styles from './ProductPage.module.css'
@@ -61,6 +62,7 @@ export default function ProductPage() {
 
 function ProductDetail({ product }: { product: Product }) {
   const groups = useMemo(() => optionGroups(product), [product])
+  const { choices, details } = useMemo(() => splitGroups(groups), [groups])
   const [selection, setSelection] = useState<Selection>(() => initialSelection(product))
   const [skuVariant, setSkuVariant] = useState<Variant | undefined>(() => primaryVariant(product))
   const variant = groups.length > 0 ? findVariant(product, selection) : skuVariant
@@ -120,7 +122,7 @@ function ProductDetail({ product }: { product: Product }) {
           {variant && <StockNote stock={variant.stock_units} />}
         </header>
 
-        {groups.map((group) => (
+        {choices.map((group) => (
           <section key={group.name} className={styles.options}>
             <h2 className={styles.optionTitle}>
               {titleCase(group.name)}
@@ -173,13 +175,6 @@ function ProductDetail({ product }: { product: Product }) {
           </section>
         )}
 
-        {product.description && (
-          <section className={styles.description}>
-            <h2 className={styles.optionTitle}>The story</h2>
-            <p>{product.description}</p>
-          </section>
-        )}
-
         <div className={styles.actionBar}>
           <div className={styles.actionInner}>
             {variant && max > 0 && (
@@ -206,6 +201,27 @@ function ProductDetail({ product }: { product: Product }) {
         <p className={styles.promise}>
           <Truck size={18} /> Packed with care and shipped across India
         </p>
+
+        {details.length > 0 && (
+          <section className={styles.details}>
+            <h2 className={styles.optionTitle}>Details</h2>
+            <dl className={styles.detailList}>
+              {details.map((item) => (
+                <div key={item.name} className={styles.detailRow}>
+                  <dt>{titleCase(item.name)}</dt>
+                  <dd>{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        {product.description && (
+          <section className={styles.description}>
+            <h2 className={styles.optionTitle}>The story</h2>
+            <p>{product.description}</p>
+          </section>
+        )}
       </div>
 
       <Recommendations productID={product.id} />
@@ -240,7 +256,7 @@ function ProductSkeleton() {
   return (
     <div className={styles.page} aria-busy>
       <div className={styles.galleryCol}>
-        <Skeleton style={{ aspectRatio: '4 / 5', borderRadius: 'var(--radius-xl)' }} />
+        <Skeleton style={{ aspectRatio: '1 / 1', borderRadius: 'var(--radius-xl)' }} />
       </div>
       <div className={styles.info}>
         <Skeleton style={{ height: 28, width: '70%' }} />

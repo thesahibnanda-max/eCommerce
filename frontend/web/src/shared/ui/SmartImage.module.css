@@ -15,6 +15,10 @@
     transform 600ms var(--ease);
 }
 
+.contain {
+  object-fit: contain;
+}
+
 .loaded {
   opacity: 1;
   transform: none;

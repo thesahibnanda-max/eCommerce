@@ -17,6 +17,20 @@ export function optionGroups(product: Product): OptionGroup[] {
   return [...groups.entries()].map(([name, values]) => ({ name, values }))
 }
 
+export function splitGroups(groups: OptionGroup[]): {
+  choices: OptionGroup[]
+  details: { name: string; value: string }[]
+} {
+  const choices: OptionGroup[] = []
+  const details: { name: string; value: string }[] = []
+  for (const group of groups) {
+    if (group.values.length > 1) choices.push(group)
+    else if (group.values[0] !== undefined)
+      details.push({ name: group.name, value: group.values[0] })
+  }
+  return { choices, details }
+}
+
 function matches(variant: Variant, selection: Selection): boolean {
   const attributes = variant.attributes ?? {}
   return Object.entries(selection).every(([name, value]) => attributes[name] === value)
