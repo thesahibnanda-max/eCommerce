@@ -69,7 +69,7 @@ flowchart LR
 
 `main.go` starts both servers from one process. `go generate ./frontend` builds the React app into `frontend/staticFiles`, which the Go binary embeds.
 
-When `PORT` is set (Render and most hosts set it), the two ports become one: a single server on `$PORT` sends `/v1/*` to the API and everything else to the storefront. The browser then calls the API on its own origin, and the real client IP is read from `CF-Connecting-IP`, `True-Client-IP` or the first `X-Forwarded-For` entry, so rate limits apply per customer.
+When `PORT` is set, the two ports become one: a single server on `$PORT` sends `/v1/*` to the API and everything else to the storefront. The browser then calls the API on its own origin, and the real client IP is read from `CF-Connecting-IP`, `True-Client-IP` or the first `X-Forwarded-For` entry, so rate limits apply per customer.
 
 ## Setup
 
@@ -81,6 +81,7 @@ Secrets live in `.env`. `config.yaml` refers to them as `${NAME}`, and they're f
 
 | Variable | What it is |
 |---|---|
+| `DATA_DIR` | Where the databases and images are stored. `data` locally, your disk's mount path in production |
 | `STORE_URL` | Public address of the store, used in email links. `http://localhost:4073` locally |
 | `TOKEN_SECRET` | Signs access tokens. At least 32 bytes |
 | `ADMIN_KEY` | Unlocks `/admin` and the admin API |
@@ -117,10 +118,10 @@ Create a **Web Service** from this repo on the Go runtime.
 |---|---|
 | Build command | `if ! command -v npm >/dev/null 2>&1; then curl -fsSL https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.xz \| tar -xJ && export PATH="$PWD/node-v24.21.0-linux-x64/bin:$PATH"; fi && go generate ./frontend && go build -tags netgo -ldflags '-s -w' -o app .` |
 | Start command | `./app` |
-| Environment | Every variable in `.env.example`, with `STORE_URL` set to your Render URL |
-| Disk | Mount path `/opt/render/project/src/data`. Needs a paid instance; without it, every deploy wipes the store |
+| Environment | Every variable in `.env.example`, plus `PORT=10000`. Set `STORE_URL` to your Render URL and `DATA_DIR` to the disk's mount path |
+| Disk | Mount path `/opt/render/project/src/data`, the same as `DATA_DIR`. Needs a paid instance; without it, every deploy wipes the store |
 
-Render sets `PORT`, so the app serves the store and the API on that one port.
+With `PORT` set, the app serves the store and the API on that one port.
 
 ## Checkout, step by step
 

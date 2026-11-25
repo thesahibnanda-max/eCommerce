@@ -28,7 +28,7 @@ admin:
   key: "${ADMIN_KEY}"
 
 storage:
-  directory: "data"
+  directory: "${DATA_DIR}"
   permission: "0600"
   usersFile: "users.db"
   productsFile: "products.db"

@@ -12,6 +12,7 @@ import (
 )
 
 var testEnv = map[string]string{
+	"DATA_DIR":                "data",
 	"STORE_URL":               "http://localhost:4073",
 	"TOKEN_SECRET":            "test-token-secret-0123456789abcdef0123",
 	"ADMIN_KEY":               "test-admin-key",
