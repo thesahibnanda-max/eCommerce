@@ -1,0 +1,31 @@
+.price {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.selling {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--primary-strong);
+}
+
+.shown {
+  color: var(--faint);
+  text-decoration: line-through;
+  font-size: 0.85em;
+}
+
+.off {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--mint-soft);
+  color: var(--success);
+  font-weight: 700;
+  font-size: 0.75em;
+}
+
+.large .selling {
+  font-size: var(--text-2xl);
+}

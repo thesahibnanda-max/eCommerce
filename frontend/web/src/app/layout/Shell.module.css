@@ -1,0 +1,23 @@
+.shell {
+  min-height: 100dvh;
+  overflow-x: clip;
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: calc(var(--content-max) + var(--gutter) * 2);
+  margin: 0 auto;
+  padding: calc(var(--topbar-h) + var(--safe-top) + var(--space-3)) var(--gutter) var(--space-12);
+}
+
+@media (min-width: 1024px) {
+  .main {
+    padding-top: calc(var(--topbar-h) + var(--safe-top) + var(--space-6));
+    padding-bottom: var(--space-16);
+  }
+}

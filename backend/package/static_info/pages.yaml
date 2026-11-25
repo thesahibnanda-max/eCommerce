@@ -1,0 +1,259 @@
+pages:
+  - slug: terms-and-conditions
+    title: Terms & Conditions
+    summary: >-
+      The rules for using {{.CompanyName}} and buying from us.
+    sections:
+      - heading: About these terms
+        paragraphs:
+          - >-
+            These Terms & Conditions govern your use of the {{.CompanyName}} website and every
+            purchase you make through it. By browsing the site, creating an account or placing an
+            order, you agree to these terms. If you do not agree, please do not use the site.
+          - >-
+            "We", "us" and "our" mean {{.CompanyName}}. "You" means the person using the site or
+            placing an order.
+      - heading: Your account
+        bullets:
+          - >-
+            You need a valid email address and an Indian mobile number to create an account, and you
+            must be at least 18 years old or use the site under the supervision of a parent or guardian.
+          - >-
+            Keep your password private. You are responsible for everything that happens under your
+            account, so tell us at {{.SupportEmail}} straight away if you think someone else has used it.
+          - >-
+            We may suspend or close an account that gives false details, misuses offers, or breaks
+            these terms.
+      - heading: Products, prices and availability
+        bullets:
+          - >-
+            Many of our pieces are handmade, so small variations in colour, size, weave or finish are
+            part of their character and are not defects. Screen settings can also change how colours look.
+          - >-
+            All prices are in Indian Rupees (₹) and include applicable taxes unless stated otherwise.
+            Shipping charges, if any, are shown before you pay.
+          - >-
+            Stock is limited. Adding an item to your bag does not reserve it until the order is confirmed.
+          - >-
+            If a product is listed at a clearly wrong price because of a mistake, we may cancel the order
+            and refund you in full, even after confirmation.
+      - heading: Orders and payment
+        paragraphs:
+          - >-
+            An order is confirmed only when payment succeeds and we send you a confirmation. We may
+            refuse or cancel an order if the item is unavailable, the payment cannot be verified, the
+            delivery address is not serviceable, or we suspect fraud. If we cancel a paid order, you
+            receive a full refund to the original payment method.
+          - >-
+            Payments are processed by secure third-party payment partners. We do not store your full
+            card, UPI or bank details.
+      - heading: Shipping, returns and refunds
+        paragraphs:
+          - >-
+            Delivery is covered by our Shipping Policy, and returns and refunds by our Refund & Return
+            Policy. Both form part of these terms.
+      - heading: Acceptable use
+        bullets:
+          - Do not use the site for anything unlawful, fraudulent or harmful.
+          - >-
+            Do not try to break, overload, scrape or gain unauthorised access to the site, other
+            accounts or our systems.
+          - Do not resell products bought from us as part of a commercial business without our written consent.
+      - heading: Intellectual property
+        paragraphs:
+          - >-
+            The site's design, text, illustrations, photos, logo and the {{.CompanyName}} name belong
+            to us or our makers and are protected by law. You may not copy or reuse them without our
+            written permission.
+      - heading: Limitation of liability
+        paragraphs:
+          - >-
+            To the extent the law allows, our total liability for any order is limited to the amount
+            you paid for that order. We are not liable for indirect losses or for delays caused by events
+            outside our reasonable control, such as natural disasters, strikes or courier disruptions.
+            Nothing in these terms limits your rights under the Consumer Protection Act, 2019.
+      - heading: Governing law
+        paragraphs:
+          - >-
+            These terms are governed by the laws of India. Any dispute is subject to the jurisdiction
+            of the courts where {{.CompanyName}} is registered, without affecting your right to approach
+            a consumer commission.
+      - heading: Changes and contact
+        paragraphs:
+          - >-
+            We may update these terms from time to time. The version on this page, with its effective
+            date, is the one that applies. Questions? Write to {{.SupportEmail}} or call {{.SupportPhone}}.
+          - >-
+            Grievance Officer: {{.GrievanceOfficer}}, {{.Address}}. Email {{.SupportEmail}}. We
+            acknowledge complaints within 48 hours and aim to resolve them within one month.
+
+  - slug: privacy-policy
+    title: Privacy Policy
+    summary: >-
+      What we collect, why we collect it, and how we keep it safe.
+    sections:
+      - heading: Our promise
+        paragraphs:
+          - >-
+            {{.CompanyName}} collects only the information we need to run the store and deliver your
+            orders. We never sell your personal data. This policy explains what we collect and your
+            choices, in line with the Digital Personal Data Protection Act, 2023 and other Indian law.
+      - heading: What we collect
+        bullets:
+          - "Account details: your name, email address, mobile number and an encrypted form of your password."
+          - "Order details: the items you buy, delivery address, and order and return history."
+          - >-
+            Payment details: processed by our payment partners. We receive only a confirmation and
+            reference number, never your full card, UPI or bank details.
+          - "Your bag: the items you add, saved on your device and, once you sign in, on your account."
+          - >-
+            Technical data: your IP address and basic request information, used to keep the site
+            secure and prevent abuse.
+      - heading: How we use it
+        bullets:
+          - To create and secure your account, including sending one-time codes to verify your email.
+          - To process, ship and support your orders, returns and refunds.
+          - To answer your questions and complaints.
+          - To protect the site against fraud, spam and misuse.
+          - To meet legal, tax and accounting obligations.
+      - heading: Who we share it with
+        paragraphs:
+          - >-
+            We share only what is needed with trusted partners who help us run the store: payment
+            gateways, courier and logistics partners, and email or SMS providers. They may use your
+            data only to provide their service to us. We may also disclose data when the law requires it.
+      - heading: Cookies and local storage
+        paragraphs:
+          - >-
+            We use your browser's local storage to remember your bag and keep you signed in. We do not
+            use advertising or third-party tracking cookies.
+      - heading: How long we keep it
+        paragraphs:
+          - >-
+            We keep account data while your account is active. Order and invoice records are kept for
+            as long as tax and accounting laws require. After that we delete or anonymise them.
+      - heading: Keeping it safe
+        paragraphs:
+          - >-
+            Passwords are stored only in hashed form, and access to personal data is restricted. No
+            system is perfectly secure, so please use a strong, unique password and keep it private.
+      - heading: Your rights
+        bullets:
+          - Ask for a copy of the personal data we hold about you.
+          - Ask us to correct or update inaccurate details.
+          - Ask us to delete your account and data, unless we must keep it by law.
+          - Withdraw consent for optional communications at any time.
+        paragraphs:
+          - >-
+            To use any of these rights, email {{.SupportEmail}} from your registered email address.
+      - heading: Children
+        paragraphs:
+          - >-
+            The site is not meant for children under 18 shopping on their own, and we do not knowingly
+            collect their data without a parent's or guardian's consent.
+      - heading: Contact and grievances
+        paragraphs:
+          - >-
+            Grievance Officer: {{.GrievanceOfficer}}, {{.Address}}. Email {{.SupportEmail}} or call
+            {{.SupportPhone}}. We may update this policy; the effective date on this page shows the
+            latest version.
+
+  - slug: refund-and-return-policy
+    title: Refund & Return Policy
+    summary: >-
+      Changed your mind or got the wrong item? You have {{.ReturnWindowDays}} days to tell us.
+    sections:
+      - heading: Return window
+        paragraphs:
+          - >-
+            You can ask to return most items within {{.ReturnWindowDays}} days of delivery. Email
+            {{.SupportEmail}} with your order details and the reason, and we will guide you through it.
+      - heading: What can be returned
+        bullets:
+          - Items must be unused, unwashed and in their original condition, with all tags and packaging.
+          - Include any free gifts or accessories that came with the item.
+          - >-
+            Damaged, defective or wrong items: tell us within 48 hours of delivery with clear photos
+            or an unboxing video, and we will arrange a free replacement or a full refund.
+      - heading: What cannot be returned
+        bullets:
+          - Items marked "non-returnable" or "final sale" on the product page.
+          - Personalised, custom-made or altered pieces.
+          - Innerwear, cosmetics, and other items that cannot be resold for hygiene reasons.
+          - Items that are used, washed, damaged by you, or missing tags.
+      - heading: How returns work
+        bullets:
+          - Request a return by email within {{.ReturnWindowDays}} days of delivery.
+          - We schedule a pickup where available, or share a return address if pickup is not serviceable.
+          - Once the item reaches us, we run a quality check within 2 business days.
+          - If it passes, we approve the refund. If it does not, we ship the item back to you.
+      - heading: Refunds
+        bullets:
+          - >-
+            Approved refunds go to the original payment method within {{.RefundDays}} business days
+            after the quality check. Your bank may take a little longer to show it.
+          - Shipping charges are refunded only if the item was damaged, defective or wrong.
+          - >-
+            For a change-of-mind return, we may deduct a reasonable return shipping fee, and we always
+            tell you the amount before you send the item.
+      - heading: Exchanges
+        paragraphs:
+          - >-
+            Want a different size or colour? Return the item for a refund and place a new order, so you
+            don't miss out on stock.
+      - heading: Cancellations
+        paragraphs:
+          - >-
+            You can cancel an order free of charge before it is dispatched. Once it has shipped, please
+            use the return process instead.
+      - heading: Need help?
+        paragraphs:
+          - >-
+            Write to {{.SupportEmail}} or call {{.SupportPhone}}. Grievance Officer: {{.GrievanceOfficer}},
+            {{.Address}}.
+
+  - slug: shipping-policy
+    title: Shipping Policy
+    summary: >-
+      Where we ship, how long it takes, and what it costs.
+    sections:
+      - heading: Where we ship
+        paragraphs:
+          - >-
+            {{.CompanyName}} ships to serviceable pin codes across India. We do not ship
+            internationally at the moment.
+      - heading: Delivery times
+        bullets:
+          - Orders are packed and dispatched within {{.DispatchDays}} business days of confirmation.
+          - >-
+            Delivery usually takes {{.DeliveryDays}} business days after dispatch, depending on your
+            location.
+          - >-
+            Remote areas, public holidays, weather and courier delays can add time, and we keep you
+            posted if that happens.
+      - heading: Shipping charges
+        bullets:
+          - Free shipping on orders of {{.FreeShippingAbove}} and above.
+          - A flat fee of {{.ShippingFee}} applies to orders below {{.FreeShippingAbove}}.
+          - The final shipping charge is always shown before you pay.
+      - heading: Tracking your order
+        paragraphs:
+          - >-
+            Once your order ships, we send you the courier name and tracking details by email or SMS
+            to your registered contact details.
+      - heading: Delivery attempts
+        paragraphs:
+          - >-
+            Couriers usually make up to three delivery attempts. If a parcel comes back to us because
+            the address was wrong or nobody was available, we refund the order value minus the shipping
+            charges, or reship it if you pay the shipping again.
+      - heading: Damaged or missing parcels
+        paragraphs:
+          - >-
+            If your parcel arrives open, damaged or tampered with, please refuse it or record an
+            unboxing video, and tell us within 48 hours at {{.SupportEmail}}. We will arrange a
+            replacement or refund under our Refund & Return Policy.
+      - heading: Questions
+        paragraphs:
+          - >-
+            Email {{.SupportEmail}} or call {{.SupportPhone}}, and we are happy to help.

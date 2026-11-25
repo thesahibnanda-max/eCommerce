@@ -1,0 +1,11 @@
+server:
+  port: 4073
+
+backend:
+  apiPort: 3000
+
+rateLimit:
+  cacheSize: 10000
+  ttl: 10m
+  rules:
+    static: {requestsPerMinute: 1200, burst: 300}

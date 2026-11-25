@@ -1,0 +1,108 @@
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control-h);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-pill);
+  font-weight: 650;
+  font-size: var(--text-base);
+  white-space: nowrap;
+  transition:
+    transform var(--dur-1) var(--ease),
+    background-color var(--dur-2) var(--ease),
+    box-shadow var(--dur-1) var(--ease),
+    opacity var(--dur-2);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lg {
+  min-height: var(--control-h-lg);
+  padding: 0 var(--space-6);
+  font-size: var(--text-md);
+}
+
+.block {
+  width: 100%;
+}
+
+.primary,
+.accent {
+  background: var(--primary);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.primary:active:not(:disabled),
+.accent:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 0 var(--primary-strong);
+}
+
+.ghost {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--text);
+  box-shadow: 0 4px 0 0 var(--text);
+}
+
+.ghost:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 0 var(--text);
+}
+
+.plain {
+  background: transparent;
+  color: var(--muted);
+}
+
+.plain:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.danger {
+  background: #ffe3ea;
+  color: var(--danger);
+  border: 2px solid #ffc2d1;
+}
+
+.danger:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .primary:hover:not(:disabled),
+  .accent:hover:not(:disabled) {
+    background: #e85d89;
+  }
+
+  .ghost:hover:not(:disabled) {
+    background: var(--butter-soft);
+  }
+
+  .plain:hover:not(:disabled) {
+    color: var(--text);
+  }
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid currentColor;
+  border-right-color: transparent;
+  animation: global(ai-spin) 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 0.8s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

@@ -1,0 +1,11 @@
+.sticker {
+  display: inline-flex;
+  transform: rotate(var(--tilt, 0deg));
+  filter: drop-shadow(1.6px 0 0 #fff) drop-shadow(-1.6px 0 0 #fff) drop-shadow(0 1.6px 0 #fff)
+    drop-shadow(0 -1.6px 0 #fff) drop-shadow(0 3px 0 rgba(58, 42, 63, 0.12));
+  pointer-events: none;
+}
+
+.float {
+  animation: global(ai-bob) 3.6s ease-in-out var(--delay, 0s) infinite;
+}

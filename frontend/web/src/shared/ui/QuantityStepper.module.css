@@ -1,0 +1,40 @@
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tint);
+  border: 2px solid var(--border);
+}
+
+.step {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--primary-strong);
+  background: var(--surface);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sticker);
+  transition: transform var(--dur-2) var(--ease-bounce);
+}
+
+.step:active:not(:disabled) {
+  transform: scale(0.88);
+}
+
+.step:disabled {
+  color: var(--faint);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.value {
+  min-width: 30px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}

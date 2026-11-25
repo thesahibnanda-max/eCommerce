@@ -1,0 +1,6 @@
+.skeleton {
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, #fbe9f0, #fff6f9, #fbe9f0);
+  background-size: 200% 100%;
+  animation: global(ai-shimmer) 1.4s linear infinite;
+}

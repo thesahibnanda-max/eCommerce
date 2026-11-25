@@ -1,0 +1,54 @@
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  transition:
+    background-color var(--dur-2),
+    border-color var(--dur-2),
+    color var(--dur-2),
+    transform var(--dur-2) var(--ease-bounce);
+}
+
+.chip:active {
+  transform: scale(0.95);
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    border-color: var(--pink);
+    transform: translateY(-1px);
+  }
+}
+
+.active {
+  background: var(--pink-soft);
+  color: var(--primary-strong);
+  border-color: var(--pink);
+}
+
+.count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--bg-deep);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.active .count {
+  background: #fff;
+  color: var(--primary-strong);
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Aesthetic Indians",
+  "short_name": "Aesthetic",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff7f2",
+  "theme_color": "#fff7f2",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

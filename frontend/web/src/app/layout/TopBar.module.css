@@ -1,0 +1,230 @@
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-nav);
+  padding: calc(var(--safe-top) + var(--space-2)) var(--gutter) var(--space-2);
+  pointer-events: none;
+}
+
+.inner {
+  pointer-events: auto;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  height: calc(var(--topbar-h) - var(--space-4));
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+  padding: 0 var(--space-4) 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.86);
+  border: 2px solid var(--border);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  box-shadow: var(--shadow-soft);
+  margin-right: auto;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pink-soft);
+  transition: transform var(--dur-3) var(--ease-bounce);
+}
+
+.brand:hover .mark {
+  transform: rotate(-10deg) scale(1.08);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.accent {
+  color: var(--primary);
+}
+
+.links,
+.search {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+}
+
+.iconButton,
+.cart {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  transition: transform var(--dur-2) var(--ease-bounce);
+}
+
+.iconButton {
+  background: rgba(255, 255, 255, 0.86);
+  border: 2px solid var(--border);
+  color: var(--text);
+  box-shadow: var(--shadow-soft);
+}
+
+.cart {
+  background: var(--primary);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.iconButton:active,
+.cart:active {
+  transform: scale(0.92);
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--butter);
+  color: var(--text);
+  border: 2px solid #fff;
+  font-size: 11px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  animation: global(ai-pop) var(--dur-3) var(--ease-bounce);
+}
+
+.iconButton.desktopOnly {
+  display: none;
+}
+
+@media (hover: hover) {
+  .iconButton:hover,
+  .cart:hover {
+    transform: translateY(-2px) rotate(-4deg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bar {
+    padding-top: calc(var(--safe-top) + var(--space-3));
+  }
+
+  .inner {
+    gap: var(--space-5);
+    padding: 0 var(--space-2) 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.82);
+    border: 2px solid var(--border);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .brand {
+    margin-right: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .links {
+    display: flex;
+    gap: var(--space-1);
+  }
+
+  .link {
+    padding: 10px 16px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    color: var(--muted);
+    transition:
+      background-color var(--dur-2),
+      color var(--dur-2);
+  }
+
+  .link:hover {
+    color: var(--text);
+    background: var(--surface-tint);
+  }
+
+  .linkActive {
+    color: var(--primary);
+    background: var(--pink-soft);
+  }
+
+  .search {
+    flex: 1;
+    max-width: 380px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: 46px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    border: 2px solid var(--border);
+    color: var(--muted);
+    transition:
+      border-color var(--dur-2),
+      box-shadow var(--dur-2);
+  }
+
+  .search:focus-within {
+    border-color: var(--pink);
+    box-shadow: 0 0 0 4px var(--pink-soft);
+  }
+
+  .search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: var(--text);
+  }
+
+  .search input::placeholder {
+    color: var(--faint);
+  }
+
+  .iconButton.desktopOnly {
+    display: grid;
+  }
+
+  .actions {
+    height: 46px;
+  }
+
+  .iconButton {
+    box-shadow: none;
+  }
+}
