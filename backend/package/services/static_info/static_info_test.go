@@ -46,7 +46,7 @@ func TestListPages(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(resp.Pages) != 4 || resp.Contact.Email != "help@example.com" {
+	if len(resp.Pages) != 5 || resp.Contact.Email != "help@example.com" {
 		t.Errorf("resp = %+v", resp)
 	}
 	if _, err := newService(t).ListPages(nil, staticInfoService.ListPagesRequest{}); !errors.Is(err, staticInfoService.ErrInvalidContext) {

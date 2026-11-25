@@ -20,7 +20,10 @@ export type InfoPage = {
 
 export type InfoPageResponse = { page: InfoPage; contact: InfoContact }
 
+export const contactSlug = 'contact-us'
+
 export const infoLinks = [
+  { slug: contactSlug, label: 'Contact Us' },
   { slug: 'terms-and-conditions', label: 'Terms & Conditions' },
   { slug: 'privacy-policy', label: 'Privacy Policy' },
   { slug: 'refund-and-return-policy', label: 'Refund & Return Policy' },

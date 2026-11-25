@@ -765,7 +765,7 @@ func TestInfoRoutes(t *testing.T) {
 	list := f.do(t, request{method: "GET", path: "/v1/info/pages"})
 	expectStatus(t, list, http.StatusOK)
 	pages := decode[staticInfoService.ListPagesResponse](t, list)
-	if len(pages.Pages) != 4 || pages.Contact.Email != "help@example.com" {
+	if len(pages.Pages) != 5 || pages.Contact.Email != "help@example.com" {
 		t.Fatalf("list = %+v", pages)
 	}
 	for _, summary := range pages.Pages {

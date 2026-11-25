@@ -49,7 +49,7 @@ func TestListPages_OrderAndSlugs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := []string{"terms-and-conditions", "privacy-policy", "refund-and-return-policy", "shipping-policy"}
+	want := []string{"terms-and-conditions", "privacy-policy", "refund-and-return-policy", "shipping-policy", "contact-us"}
 	if len(pages) != len(want) {
 		t.Fatalf("got %d pages, want %d", len(pages), len(want))
 	}
@@ -62,7 +62,7 @@ func TestListPages_OrderAndSlugs(t *testing.T) {
 
 func TestGetPage_RendersConfig(t *testing.T) {
 	info := newInfo(t)
-	for _, slug := range []string{"terms-and-conditions", "privacy-policy", "refund-and-return-policy", "shipping-policy"} {
+	for _, slug := range []string{"terms-and-conditions", "privacy-policy", "refund-and-return-policy", "shipping-policy", "contact-us"} {
 		page, err := info.GetPage(context.Background(), slug)
 		if err != nil {
 			t.Fatalf("GetPage(%s): %v", slug, err)
@@ -86,6 +86,19 @@ func TestGetPage_RendersConfig(t *testing.T) {
 	text := pageText(shipping)
 	if !strings.Contains(text, "₹1,499") || !strings.Contains(text, "₹79") {
 		t.Errorf("shipping page missing rupee amounts:\n%s", text)
+	}
+}
+
+func TestGetPage_ContactUsShowsAllDetails(t *testing.T) {
+	page, err := newInfo(t).GetPage(context.Background(), "contact-us")
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := pageText(page)
+	for _, want := range []string{"Contact Us", "help@example.com", "+91 98765 43210", "Aesthetic Indians, 12 Lane, Jaipur, Rajasthan 302001", "Asha Rao", "48 hours"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("contact page missing %q:\n%s", want, text)
+		}
 	}
 }
 

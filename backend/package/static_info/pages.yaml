@@ -257,3 +257,30 @@ pages:
         paragraphs:
           - >-
             Email {{.SupportEmail}} or call {{.SupportPhone}}, and we are happy to help.
+
+  - slug: contact-us
+    title: Contact Us
+    summary: >-
+      Talk to a real person at {{.CompanyName}} about an order, a return or anything else.
+    sections:
+      - heading: How to reach us
+        bullets:
+          - "Email: {{.SupportEmail}}"
+          - "Phone: {{.SupportPhone}}"
+          - >-
+            Email works best for anything about an order, because you can attach photos and we keep
+            a written record of what we agreed.
+      - heading: Business address
+        paragraphs:
+          - "{{.CompanyName}}, {{.Address}}"
+      - heading: Help with an order
+        bullets:
+          - Include your order ID. You will find it under Account → Orders and in your order emails.
+          - For a damaged or wrong item, add photos or the unboxing video, and write to us within 48 hours of delivery.
+          - For a payment question, include the UPI transaction ID (UTR) you paid with.
+      - heading: Grievance Officer
+        paragraphs:
+          - >-
+            If we have not sorted out a problem, you can write to our Grievance Officer,
+            {{.GrievanceOfficer}}, at {{.SupportEmail}} or {{.Address}}. We acknowledge complaints
+            within 48 hours and aim to resolve them within one month.

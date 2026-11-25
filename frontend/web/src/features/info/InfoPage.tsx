@@ -4,7 +4,13 @@ import { CalendarHeart, Mail, MapPin, Phone, UserRound } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Link, NavLink, useParams } from 'react-router'
 import { errorMessage, isApiError } from '@/shared/api/errors'
-import { getInfoPage, infoLinks, type InfoContact, type InfoSection } from '@/shared/api/info'
+import {
+  contactSlug,
+  getInfoPage,
+  infoLinks,
+  type InfoContact,
+  type InfoSection,
+} from '@/shared/api/info'
 import { Button } from '@/shared/ui/Button'
 import { Flower, Heart, Mascot, Sparkle, Sticker, toneAt } from '@/shared/ui/doodles'
 import { EmptyState } from '@/shared/ui/EmptyState'
@@ -23,6 +29,7 @@ export default function InfoPage() {
     enabled: slug.length > 0,
     staleTime: 30 * 60_000,
   })
+  const isContact = slug === contactSlug
   const navRef = useRef<HTMLElement>(null)
   useEffect(() => {
     navRef.current
@@ -33,8 +40,8 @@ export default function InfoPage() {
   return (
     <div className={styles.page}>
       <aside className={styles.sidebar}>
-        <nav ref={navRef} className={styles.policyNav} aria-label="Policies">
-          <span className={styles.navTitle}>Policies ✿</span>
+        <nav ref={navRef} className={styles.policyNav} aria-label="Help and policies">
+          <span className={styles.navTitle}>Help & policies ✿</span>
           {infoLinks.map((link, index) => (
             <NavLink
               key={link.slug}
@@ -75,9 +82,11 @@ export default function InfoPage() {
         ) : (
           <article className={styles.article}>
             <header className={styles.hero}>
-              <span className={styles.eyebrow}>
-                <CalendarHeart size={15} /> Effective {query.data.page.effective_date}
-              </span>
+              {!isContact && (
+                <span className={styles.eyebrow}>
+                  <CalendarHeart size={15} /> Effective {query.data.page.effective_date}
+                </span>
+              )}
               <h1 className={styles.title}>{query.data.page.title}</h1>
               <p className={styles.summary}>{query.data.page.summary}</p>
               <Sticker className={styles.s1} tilt={-10}>
@@ -91,7 +100,9 @@ export default function InfoPage() {
               </Sticker>
             </header>
 
-            {query.data.page.sections.length > 3 && (
+            {isContact && <ContactCard contact={query.data.contact} variant="primary" />}
+
+            {!isContact && query.data.page.sections.length > 3 && (
               <nav className={styles.toc} aria-label="On this page">
                 {query.data.page.sections.map((section, index) => (
                   <a key={section.heading} href={`#${sectionId(index)}`} className={styles.tocLink}>
@@ -105,7 +116,7 @@ export default function InfoPage() {
               <Section key={section.heading} section={section} index={index} />
             ))}
 
-            <ContactCard contact={query.data.contact} />
+            {!isContact && <ContactCard contact={query.data.contact} variant="footer" />}
           </article>
         )}
       </div>
@@ -136,13 +147,26 @@ function Section({ section, index }: { section: InfoSection; index: number }) {
   )
 }
 
-function ContactCard({ contact }: { contact: InfoContact }) {
+function ContactCard({
+  contact,
+  variant,
+}: {
+  contact: InfoContact
+  variant: 'primary' | 'footer'
+}) {
+  const primary = variant === 'primary'
   return (
     <section className={styles.contact}>
       <Mascot size={78} mood="happy" wave className={styles.contactMascot} />
       <div className={styles.contactBody}>
-        <h2 className={styles.contactTitle}>Still have questions?</h2>
-        <p className={styles.contactText}>We are real people and we love hearing from you.</p>
+        <h2 className={styles.contactTitle}>
+          {primary ? `Talk to ${contact.company_name}` : 'Still have questions?'}
+        </h2>
+        <p className={styles.contactText}>
+          {primary
+            ? 'Email or call us. A real person reads every message.'
+            : 'We are real people and we love hearing from you.'}
+        </p>
         <ul className={styles.contactList}>
           <li>
             <Mail size={16} />
@@ -161,9 +185,15 @@ function ContactCard({ contact }: { contact: InfoContact }) {
             <span>{contact.address}</span>
           </li>
         </ul>
-        <Link to="/" className={styles.back}>
-          ← Back to shopping
-        </Link>
+        {primary ? (
+          <a href={`#${sectionId(2)}`} className={styles.back}>
+            Asking about an order? Here is what to include ↓
+          </a>
+        ) : (
+          <Link to={`/info/${contactSlug}`} className={styles.back}>
+            All contact details →
+          </Link>
+        )}
       </div>
     </section>
   )
