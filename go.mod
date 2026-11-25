@@ -16,6 +16,7 @@ require (
 	github.com/nyaruka/phonenumbers/v2 v2.0.17
 	github.com/oklog/ulid/v2 v2.1.2
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
+	github.com/valyala/fasthttp v1.78.0
 	github.com/wneessen/go-mail v0.8.2
 	go.etcd.io/bbolt v1.5.0
 	golang.org/x/image v0.45.0
@@ -77,7 +78,6 @@ require (
 	github.com/tinylib/msgp v1.6.5 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.78.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
 	golang.org/x/crypto v0.58.0 // indirect

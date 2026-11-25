@@ -1,8 +1,18 @@
 package frontendDependencyInjection
 
 import (
+	"io/fs"
+
 	rateLimiter "github.com/thesahibnanda-max/eCommerce/backend/package/rate_limiter"
+	frontendHandler "github.com/thesahibnanda-max/eCommerce/frontend/package/handler"
 )
+
+func newHandler(files fs.FS, apiPort uint, sameOriginAPI bool, limiter rateLimiter.Limiter) (frontendHandler.Handler, error) {
+	if sameOriginAPI {
+		return frontendHandler.NewSameOriginHandler(files, limiter)
+	}
+	return frontendHandler.NewHandler(files, apiPort, limiter)
+}
 
 func validatePort(port uint) error {
 	if port == 0 || port > maxPort {

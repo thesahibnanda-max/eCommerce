@@ -12,6 +12,7 @@ import (
 )
 
 var testEnv = map[string]string{
+	"STORE_URL":               "http://localhost:4073",
 	"TOKEN_SECRET":            "test-token-secret-0123456789abcdef0123",
 	"ADMIN_KEY":               "test-admin-key",
 	"SMTP_SENDER_1_EMAIL":     "sender1@example.com",

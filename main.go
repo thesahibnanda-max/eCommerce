@@ -33,6 +33,11 @@ func run() (err error) {
 	signalCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	port, singlePort, err := singlePortFromEnv()
+	if err != nil {
+		return err
+	}
+
 	backendApp, err := backendDependencyInjection.NewApp(signalCtx)
 	if err != nil {
 		return err
@@ -41,13 +46,18 @@ func run() (err error) {
 		err = errors.Join(err, backendApp.Close())
 	}()
 
-	frontendApp, err := frontendDependencyInjection.NewApp(signalCtx)
+	frontendApp, err := frontendDependencyInjection.NewApp(signalCtx, singlePort)
 	if err != nil {
 		return err
 	}
 	defer func() {
 		err = errors.Join(err, frontendApp.Close())
 	}()
+
+	if singlePort {
+		handler := newSinglePortHandler(backendApp.Router().Handler(), frontendApp.Router().Handler())
+		return serveSinglePort(signalCtx, port, handler)
+	}
 
 	group, ctx := errgroup.WithContext(signalCtx)
 	group.Go(func() error {

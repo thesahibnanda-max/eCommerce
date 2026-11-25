@@ -69,6 +69,8 @@ flowchart LR
 
 `main.go` starts both servers from one process. `go generate ./frontend` builds the React app into `frontend/staticFiles`, which the Go binary embeds.
 
+When `PORT` is set (Render and most hosts set it), the two ports become one: a single server on `$PORT` sends `/v1/*` to the API and everything else to the storefront. The browser then calls the API on its own origin, and the real client IP is read from `CF-Connecting-IP`, `True-Client-IP` or the first `X-Forwarded-For` entry, so rate limits apply per customer.
+
 ## Setup
 
 You need Go 1.26 and Node 24.
@@ -79,6 +81,7 @@ Secrets live in `.env`. `config.yaml` refers to them as `${NAME}`, and they're f
 
 | Variable | What it is |
 |---|---|
+| `STORE_URL` | Public address of the store, used in email links. `http://localhost:4073` locally |
 | `TOKEN_SECRET` | Signs access tokens. At least 32 bytes |
 | `ADMIN_KEY` | Unlocks `/admin` and the admin API |
 | `SMTP_SENDER_N_EMAIL`, `SMTP_SENDER_N_USERNAME`, `SMTP_SENDER_N_PASSWORD` | Address, login and app password for mail senders 1 and 2 |
@@ -105,6 +108,19 @@ go run .
 ```
 
 For hot reload on the storefront, run `npm run dev` in `frontend/web` next to `go run .`.
+
+## Deploy on Render
+
+Create a **Web Service** from this repo on the Go runtime.
+
+| Setting | Value |
+|---|---|
+| Build command | `if ! command -v npm >/dev/null 2>&1; then curl -fsSL https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.xz \| tar -xJ && export PATH="$PWD/node-v24.21.0-linux-x64/bin:$PATH"; fi && go generate ./frontend && go build -tags netgo -ldflags '-s -w' -o app .` |
+| Start command | `./app` |
+| Environment | Every variable in `.env.example`, with `STORE_URL` set to your Render URL |
+| Disk | Mount path `/opt/render/project/src/data`. Needs a paid instance; without it, every deploy wipes the store |
+
+Render sets `PORT`, so the app serves the store and the API on that one port.
 
 ## Checkout, step by step
 

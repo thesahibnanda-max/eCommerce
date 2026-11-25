@@ -9,7 +9,6 @@ import (
 	rateLimiter "github.com/thesahibnanda-max/eCommerce/backend/package/rate_limiter"
 	"github.com/thesahibnanda-max/eCommerce/backend/package/utils"
 	"github.com/thesahibnanda-max/eCommerce/frontend"
-	frontendHandler "github.com/thesahibnanda-max/eCommerce/frontend/package/handler"
 	frontendRouter "github.com/thesahibnanda-max/eCommerce/frontend/package/router"
 )
 
@@ -35,7 +34,7 @@ type app struct {
 	port   uint
 }
 
-func NewApp(ctx context.Context) (App, error) {
+func NewApp(ctx context.Context, sameOriginAPI bool) (App, error) {
 	if err := utils.CheckContext(ctx); err != nil {
 		return nil, err
 	}
@@ -54,7 +53,7 @@ func NewApp(ctx context.Context) (App, error) {
 	if err != nil {
 		return nil, err
 	}
-	h, err := frontendHandler.NewHandler(files, config.Backend.APIPort, limiter)
+	h, err := newHandler(files, config.Backend.APIPort, sameOriginAPI, limiter)
 	if err != nil {
 		return nil, err
 	}

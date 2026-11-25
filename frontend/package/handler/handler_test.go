@@ -213,3 +213,23 @@ func Test_RateLimit(t *testing.T) {
 		t.Fatalf("limited = %d %q %s", resp.StatusCode, resp.Header.Get("Retry-After"), body)
 	}
 }
+
+func Test_SameOriginHandler(t *testing.T) {
+	h, err := frontendHandler.NewSameOriginHandler(testFiles(), newLimiter(t, generous()))
+	if err != nil {
+		t.Fatalf("NewSameOriginHandler() error = %v", err)
+	}
+	app := fiber.New()
+	app.Get("/", h.ServeStatic)
+	resp, body := get(t, app, http.MethodGet, "/", nil)
+	if !bytes.Contains(body, []byte(`<meta name="ai-api-port" content="same-origin"></head>`)) {
+		t.Fatalf("index missing same-origin meta: %s", body)
+	}
+	csp := resp.Header.Get(fiber.HeaderContentSecurityPolicy)
+	if strings.Contains(csp, ":3000") || !strings.Contains(csp, "connect-src 'self'") {
+		t.Fatalf("csp = %q", csp)
+	}
+	if _, err := frontendHandler.NewSameOriginHandler(nil, newLimiter(t, generous())); !errors.Is(err, frontendHandler.ErrFilesRequired) {
+		t.Fatalf("nil files err = %v", err)
+	}
+}

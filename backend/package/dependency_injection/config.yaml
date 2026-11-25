@@ -4,7 +4,7 @@ app:
   supportPhone: "+91 9953062283"
   address: "Netanya No. 9 (Old No. 150), Borewell Layout, Bangalore, Karnataka 560001"
   grievanceOfficer: "Sahib Nanda"
-  storeURL: "http://localhost:4073"
+  storeURL: "${STORE_URL}"
 
 policies:
   effectiveDate: "2026-11-13"

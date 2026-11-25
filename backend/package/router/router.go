@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/compress"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/valyala/fasthttp"
 
 	"github.com/thesahibnanda-max/eCommerce/backend/package/handler"
 )
@@ -23,6 +24,7 @@ const (
 
 type Router interface {
 	ListenAndServeOnPort(ctx context.Context, port uint) chan error
+	Handler() fasthttp.RequestHandler
 }
 
 type routerImpl struct {
@@ -74,4 +76,8 @@ func (r *routerImpl) ListenAndServeOnPort(ctx context.Context, port uint) chan e
 		}
 	}()
 	return errs
+}
+
+func (r *routerImpl) Handler() fasthttp.RequestHandler {
+	return r.app.Handler()
 }

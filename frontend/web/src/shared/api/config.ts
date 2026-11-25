@@ -1,12 +1,15 @@
 const defaultPort = '3000'
+const sameOrigin = 'same-origin'
 
-function readPort(): string {
+function readAPIOrigin(): string {
   const meta = document.querySelector<HTMLMetaElement>('meta[name="ai-api-port"]')
   const value = meta?.content.trim() ?? ''
-  return /^\d{1,5}$/.test(value) ? value : defaultPort
+  if (value === sameOrigin) return window.location.origin
+  const port = /^\d{1,5}$/.test(value) ? value : defaultPort
+  return `${window.location.protocol}//${window.location.hostname}:${port}`
 }
 
-export const apiOrigin = `${window.location.protocol}//${window.location.hostname}:${readPort()}`
+export const apiOrigin = readAPIOrigin()
 
 export const apiBase = `${apiOrigin}/v1`
 

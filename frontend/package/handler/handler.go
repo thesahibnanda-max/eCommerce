@@ -16,6 +16,7 @@ const (
 	maxPort           = 65535
 	minCompressBytes  = 512
 	metaAPIPort       = "ai-api-port"
+	sameOriginAPI     = "same-origin"
 	cacheImmutable    = "public, max-age=31536000, immutable"
 	cacheRevalidate   = "no-cache"
 	immutablePrefix   = "assets/"
@@ -45,22 +46,32 @@ func NewHandler(files fs.FS, apiPort uint, limiter rateLimiter.Limiter) (Handler
 	if apiPort == 0 || apiPort > maxPort {
 		return nil, ErrAPIPortInvalid
 	}
+	return newHandler(files, strconv.FormatUint(uint64(apiPort), 10), limiter)
+}
+
+func NewSameOriginHandler(files fs.FS, limiter rateLimiter.Limiter) (Handler, error) {
+	if files == nil {
+		return nil, ErrFilesRequired
+	}
+	return newHandler(files, sameOriginAPI, limiter)
+}
+
+func newHandler(files fs.FS, api string, limiter rateLimiter.Limiter) (Handler, error) {
 	if limiter == nil {
 		return nil, ErrRateLimiterRequired
 	}
 	if !limiter.HasGroup(groupStatic) {
 		return nil, ErrRateLimitGroupMissing
 	}
-	port := strconv.FormatUint(uint64(apiPort), 10)
 	assets, err := loadAssets(files)
 	if err != nil {
 		return nil, err
 	}
-	index, err := buildIndex(assets, port)
+	index, err := buildIndex(assets, api)
 	if err != nil {
 		return nil, err
 	}
-	return &handler{assets: assets, index: index, csp: securityPolicy(port), limiter: limiter}, nil
+	return &handler{assets: assets, index: index, csp: securityPolicy(api), limiter: limiter}, nil
 }
 
 func (h *handler) ServeStatic(c fiber.Ctx) error {

@@ -141,6 +141,9 @@ func injectMeta(index []byte, name string, value string) []byte {
 
 func securityPolicy(apiPort string) string {
 	api := "http://*:" + apiPort + " https://*:" + apiPort
+	if apiPort == sameOriginAPI {
+		api = "'self'"
+	}
 	return "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: " + api +
 		"; font-src 'self'; connect-src 'self' " + api +
 		"; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"

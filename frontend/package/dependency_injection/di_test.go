@@ -8,8 +8,18 @@ import (
 	"github.com/thesahibnanda-max/eCommerce/backend/package/utils"
 )
 
+func Test_NewApp_SameOrigin(t *testing.T) {
+	a, err := NewApp(context.Background(), true)
+	if err != nil {
+		t.Fatalf("NewApp() error = %v", err)
+	}
+	if a.Router().Handler() == nil {
+		t.Fatal("Handler() = nil")
+	}
+}
+
 func Test_NewApp(t *testing.T) {
-	a, err := NewApp(context.Background())
+	a, err := NewApp(context.Background(), false)
 	if err != nil {
 		t.Fatalf("NewApp() error = %v", err)
 	}
@@ -24,7 +34,7 @@ func Test_NewApp(t *testing.T) {
 func Test_NewApp_CancelledContext(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	if _, err := NewApp(ctx); !errors.Is(err, utils.ErrContextInvalid) {
+	if _, err := NewApp(ctx, false); !errors.Is(err, utils.ErrContextInvalid) {
 		t.Fatalf("err = %v", err)
 	}
 }
