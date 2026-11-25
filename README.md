@@ -137,8 +137,8 @@ Without the secret, the deploy step is skipped with a warning and CI stays green
 
 1. Bag → Checkout. Pick or add an address.
 2. **Place order.** Stock comes off and the bag is emptied.
-3. **With Instamojo (current):** the order page has a Pay button that opens Instamojo's checkout (UPI, cards, netbanking, wallets). After paying, the customer lands back on the store, and the order confirms itself through the webhook or the background poll. If it isn't paid within the poll window, the order fails and the stock goes back.
-4. **With self UPI:** the order page shows the UPI QR, UPI ID and an app link. The customer pays, uploads the UTR and a screenshot, and you approve or reject in `/admin`.
+3. **With Instamojo:** the order page has a Pay button that opens Instamojo's checkout (UPI, cards, netbanking, wallets). After paying, the customer lands back on the store, and the order confirms itself through the webhook or the background poll. If it isn't paid within the poll window, the order fails and the stock goes back.
+4. **With self UPI (current):** the order page shows the UPI QR, UPI ID and an app link. The customer pays, uploads the UTR and a screenshot, and you approve or reject in `/admin`.
 
 Either way the customer gets an email when payment is confirmed, and their order page updates on its own.
 
@@ -204,8 +204,8 @@ The full route table is in `backend/package/router`.
 
 Set `payments.provider` in config:
 
-- **`INSTAMOJO`** (live): hosted checkout on `api.instamojo.com`. The customer pays on Instamojo's page and comes back to `${STORE_URL}/payments/return`. Payments confirm themselves through the webhook at `${STORE_URL}/v1/payments/webhook`, and a background job keeps polling until the payment settles or the window closes. Needs the three `INSTAMOJO_*` secrets, and `STORE_URL` must be the public https address so Instamojo can reach the webhook. Instamojo no longer runs a separate test environment, so these are live keys.
-- **`SELF_UPI`**: customers pay your UPI ID and you confirm by hand in `/admin`. The QR and UPI ID come from `backend/package/clients/self_upi/self_upi.json`.
+- **`INSTAMOJO`**: hosted checkout on `api.instamojo.com`. The customer pays on Instamojo's page and comes back to `${STORE_URL}/payments/return`. Payments confirm themselves through the webhook at `${STORE_URL}/v1/payments/webhook`, and a background job keeps polling until the payment settles or the window closes. Needs the three `INSTAMOJO_*` secrets, and `STORE_URL` must be the public https address so Instamojo can reach the webhook. Instamojo no longer runs a separate test environment, so these are live keys.
+- **`SELF_UPI`** (current): customers pay your UPI ID and you confirm by hand in `/admin`. The QR and UPI ID come from `backend/package/clients/self_upi/self_upi.json`.
 
 ## Tests
 

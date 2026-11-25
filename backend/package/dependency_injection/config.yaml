@@ -81,7 +81,7 @@ rateLimit:
     payments: {requestsPerMinute: 120, burst: 40}
 
 payments:
-  provider: "INSTAMOJO"
+  provider: "SELF_UPI"
   paymentsFile: "payments.db"
   queueFile: "payments_queue.db"
   instamojo:
