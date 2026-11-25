@@ -81,11 +81,11 @@ rateLimit:
     payments: {requestsPerMinute: 120, burst: 40}
 
 payments:
-  provider: "SELF_UPI"
+  provider: "INSTAMOJO"
   paymentsFile: "payments.db"
   queueFile: "payments_queue.db"
   instamojo:
-    baseURL: "https://test.instamojo.com"
+    baseURL: "https://api.instamojo.com"
     clientID: "${INSTAMOJO_CLIENT_ID}"
     clientSecret: "${INSTAMOJO_CLIENT_SECRET}"
     privateSalt: "${INSTAMOJO_PRIVATE_SALT}"
@@ -94,7 +94,7 @@ payments:
     pollWindow: 10m
     leaseTimeout: 30s
     concurrency: 4
-    redirectURL: "http://localhost:4073/payments/return"
-    webhookURL: ""
+    redirectURL: "${STORE_URL}/payments/return"
+    webhookURL: "${STORE_URL}/v1/payments/webhook"
   upi:
     payeeName: "Aesthetic Indians"

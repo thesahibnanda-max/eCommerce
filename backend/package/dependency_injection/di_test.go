@@ -22,9 +22,9 @@ var testEnv = map[string]string{
 	"SMTP_SENDER_2_EMAIL":     "sender2@example.com",
 	"SMTP_SENDER_2_USERNAME":  "sender2@example.com",
 	"SMTP_SENDER_2_PASSWORD":  "test-password-2",
-	"INSTAMOJO_CLIENT_ID":     "",
-	"INSTAMOJO_CLIENT_SECRET": "",
-	"INSTAMOJO_PRIVATE_SALT":  "",
+	"INSTAMOJO_CLIENT_ID":     "test-client-id",
+	"INSTAMOJO_CLIENT_SECRET": "test-client-secret",
+	"INSTAMOJO_PRIVATE_SALT":  "test-salt",
 }
 
 func TestMain(m *testing.M) {
