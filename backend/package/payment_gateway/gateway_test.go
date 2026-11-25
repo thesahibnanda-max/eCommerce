@@ -354,6 +354,34 @@ func TestInstamojo_CreateFailureMarksFailedAndAllowsRetry(t *testing.T) {
 	}
 }
 
+func TestInstamojo_CreateFailureKeepsProviderErrorOutOfCustomerReason(t *testing.T) {
+	g, fake, repo, _ := newInstamojo(t, nil)
+	fake.createErr = fmt.Errorf("%w: status 403: message: Payment Requests are not enabled for your account.", instamojoClient.ErrForbidden)
+	if _, err := g.InitiatePayment(context.Background(), initiateRequest("order-1")); !errors.Is(err, instamojoClient.ErrForbidden) {
+		t.Fatalf("got %v", err)
+	}
+	list, err := repo.ListOrderPayments(context.Background(), "order-1")
+	if err != nil || len(list) != 1 {
+		t.Fatalf("payments %v %+v", err, list)
+	}
+	if list[0].FailureReason != reasonPaymentSetupFailed || strings.Contains(list[0].FailureReason, "instamojo") {
+		t.Fatalf("customer-facing reason = %q", list[0].FailureReason)
+	}
+	model, err := repo.GetPayment(context.Background(), list[0].ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, event := range model.Events {
+		if detail, _ := event.Data["error"].(string); event.Kind == "setup_failed" && strings.Contains(detail, "Payment Requests are not enabled") {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("provider error not kept in admin event history: %+v", model.Events)
+	}
+}
+
 func TestInstamojo_PollReachesSuccessOnce(t *testing.T) {
 	g, fake, repo, recorder := newInstamojo(t, func(p *InstamojoConstructorParams) { p.PollWindow = 5 * time.Second })
 	resp, err := g.InitiatePayment(context.Background(), initiateRequest("order-1"))

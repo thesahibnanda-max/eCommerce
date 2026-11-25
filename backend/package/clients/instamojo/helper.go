@@ -164,8 +164,10 @@ func checkStatus(status int, body string) error {
 	switch {
 	case status == http.StatusOK || status == http.StatusCreated:
 		return nil
-	case status == http.StatusUnauthorized || status == http.StatusForbidden:
+	case status == http.StatusUnauthorized:
 		return fmt.Errorf("%w: status %d: %s", ErrUnauthorized, status, describeErrorBody(body))
+	case status == http.StatusForbidden:
+		return fmt.Errorf("%w: status %d: %s", ErrForbidden, status, describeErrorBody(body))
 	case status == http.StatusBadRequest:
 		return fmt.Errorf("%w: %s", ErrValidationFailed, describeErrorBody(body))
 	case status == http.StatusNotFound:

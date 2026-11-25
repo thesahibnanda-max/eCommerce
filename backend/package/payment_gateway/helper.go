@@ -23,15 +23,17 @@ import (
 )
 
 const (
-	maxIDRunes          = 128
-	maxPurposeRunes     = 100
-	maxNoteRunes        = 300
-	maxReasonRunes      = 300
-	maxFieldRunes       = 512
-	finalizeTimeout     = 10 * time.Second
-	bestEffortTimeout   = 5 * time.Second
-	metadataDeadlineKey = "poll_deadline"
-	webhookMACField     = "mac"
+	maxIDRunes      = 128
+	maxPurposeRunes = 100
+	maxNoteRunes    = 300
+	maxReasonRunes  = 300
+
+	reasonPaymentSetupFailed = "We couldn't start your payment. Please try again in a few minutes, or contact us if it keeps happening."
+	maxFieldRunes            = 512
+	finalizeTimeout          = 10 * time.Second
+	bestEffortTimeout        = 5 * time.Second
+	metadataDeadlineKey      = "poll_deadline"
+	webhookMACField          = "mac"
 )
 
 type core struct {
@@ -148,13 +150,22 @@ func (c *core) finalize(ctx context.Context, model paymentsRepository.Model) {
 }
 
 func (c *core) markFailed(ctx context.Context, paymentID, reason string) {
+	c.markFailedWithDetail(ctx, paymentID, reason, "")
+}
+
+func (c *core) markFailedWithDetail(ctx context.Context, paymentID, reason, detail string) {
 	failCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), bestEffortTimeout)
 	defer cancel()
 	reason = truncate(reason, maxReasonRunes)
+	data := map[string]any{"reason": reason}
+	if detail != "" {
+		data["error"] = truncate(detail, maxReasonRunes)
+		c.logError("payment setup failed", "payment_id", paymentID, "error", detail)
+	}
 	_, _, err := c.transition(failCtx, paymentID, StateFailed, paymentsRepository.Patch{FailureReason: &reason}, paymentsRepository.EventInput{
 		Source: paymentsRepository.EventSourceSystem,
 		Kind:   "setup_failed",
-		Data:   map[string]any{"reason": reason},
+		Data:   data,
 	})
 	if err != nil {
 		c.logError("could not mark payment failed", "payment_id", paymentID, "error", err.Error())

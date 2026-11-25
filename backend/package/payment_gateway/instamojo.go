@@ -106,7 +106,7 @@ func (g *instamojoGateway) InitiatePayment(ctx context.Context, req InitiateRequ
 		ExpiresAt:   deadline,
 	})
 	if err != nil {
-		g.markFailed(ctx, model.ID, err.Error())
+		g.markFailedWithDetail(ctx, model.ID, reasonPaymentSetupFailed, err.Error())
 		return InitiateResponse{}, fmt.Errorf("%w: %w", ErrProviderFailed, err)
 	}
 	model, _, err = g.transition(ctx, model.ID, StateAwaitingPayment, paymentsRepository.Patch{

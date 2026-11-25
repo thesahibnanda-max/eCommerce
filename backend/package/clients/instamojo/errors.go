@@ -21,6 +21,7 @@ const (
 	ErrNotFound                = Error("instamojoClient: not found on instamojo")
 	ErrAuthFailed              = Error("instamojoClient: could not get access token")
 	ErrUnauthorized            = Error("instamojoClient: access token rejected")
+	ErrForbidden               = Error("instamojoClient: request not permitted for this account")
 	ErrValidationFailed        = Error("instamojoClient: instamojo rejected the request")
 	ErrUpstream                = Error("instamojoClient: instamojo request failed")
 	ErrResponseInvalid         = Error("instamojoClient: instamojo response is invalid")

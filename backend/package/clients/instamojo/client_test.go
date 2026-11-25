@@ -368,7 +368,7 @@ func TestCreatePaymentRequest_UpstreamErrors(t *testing.T) {
 		{"validation", http.StatusBadRequest, `{"purpose":["This field is required."],"amount":["This field is required.","Too low."]}`, ErrValidationFailed, "amount: This field is required., Too low.; purpose: This field is required."},
 		{"nested message", http.StatusBadRequest, `{"success":false,"message":{"phone":["Invalid."]}}`, ErrValidationFailed, "phone: Invalid."},
 		{"server error", http.StatusBadGateway, `<html>bad gateway</html>`, ErrUpstream, "status 502"},
-		{"forbidden", http.StatusForbidden, `{"success":false,"message":"nope"}`, ErrUnauthorized, "message: nope"},
+		{"forbidden", http.StatusForbidden, `{"success":false,"message":"nope"}`, ErrForbidden, "message: nope"},
 		{"bad json", http.StatusOK, `{"id":`, ErrResponseInvalid, ""},
 		{"missing longurl", http.StatusOK, `{"id":"abc"}`, ErrResponseInvalid, "longurl"},
 		{"unknown status", http.StatusOK, `{"id":"abc","longurl":"https://x.com/a","status":"Weird"}`, ErrResponseInvalid, "Weird"},
@@ -654,7 +654,7 @@ func TestGetPaymentDetails_Errors(t *testing.T) {
 		{"id mismatch", successfulPayment, http.StatusOK, ErrResponseInvalid},
 		{"no amount", `{"id":"MOJO3207U05Q80983267","status":true}`, http.StatusOK, ErrResponseInvalid},
 		{"bad json", `{`, http.StatusOK, ErrResponseInvalid},
-		{"forbidden", `{"success":false,"message":"nope"}`, http.StatusForbidden, ErrUnauthorized},
+		{"forbidden", `{"success":false,"message":"nope"}`, http.StatusForbidden, ErrForbidden},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
