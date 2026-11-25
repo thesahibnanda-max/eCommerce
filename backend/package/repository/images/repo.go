@@ -8,7 +8,6 @@ import (
 	"image"
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/gen2brain/avif"
@@ -33,6 +32,7 @@ const (
 	avifQuality     = 70
 	avifSpeed       = 8
 	warmupSize      = 16
+	maxEncodes      = 1
 )
 
 type Repository interface {
@@ -81,7 +81,7 @@ func NewRepository(path []string, permission os.FileMode) (Repository, error) {
 				ChromaSubsampling: image.YCbCrSubsampleRatio420,
 			},
 		},
-		slots: make(chan struct{}, runtime.NumCPU()),
+		slots: make(chan struct{}, maxEncodes),
 	}
 
 	if err := r.warmUp(); err != nil {
