@@ -15,7 +15,16 @@ import (
 	selfUPIClient "github.com/thesahibnanda-max/eCommerce/backend/package/clients/self_upi"
 	paymentGateway "github.com/thesahibnanda-max/eCommerce/backend/package/payment_gateway"
 	rateLimiter "github.com/thesahibnanda-max/eCommerce/backend/package/rate_limiter"
+	addressRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/address"
+	cartsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/carts"
+	imagesRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/images"
+	ordersRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/orders"
 	paymentsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/payments"
+	productsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/products"
+	spreadsheetRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/spreadsheet"
+	usersRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/users"
+	cronService "github.com/thesahibnanda-max/eCommerce/backend/package/services/cron"
+	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	"github.com/thesahibnanda-max/eCommerce/backend/package/smtp"
 	staticInfo "github.com/thesahibnanda-max/eCommerce/backend/package/static_info"
 )
@@ -196,5 +205,70 @@ func newPaymentGateway(cfg paymentsConfig, companyName, directory string, permis
 		return gateway, []func() error{client.Close, gateway.Close}, nil
 	default:
 		return nil, nil, ErrPaymentProviderInvalid
+	}
+}
+
+func newSnapshots(ctx context.Context, cfg configStruct, sources []snapshotService.Source) (snapshotService.Service, []func() error, error) {
+	google := cfg.Google
+	if strings.TrimSpace(google.ClientID) == "" || strings.TrimSpace(google.ClientSecret) == "" || strings.TrimSpace(google.RefreshToken) == "" {
+		return nil, nil, nil
+	}
+	var closers []func() error
+	sheets, err := spreadsheetRepository.NewRepository(ctx, spreadsheetRepository.Config{
+		ClientID:     google.ClientID,
+		ClientSecret: google.ClientSecret,
+		RefreshToken: google.RefreshToken,
+		FolderID:     google.FolderID,
+		CompanyName:  cfg.App.CompanyName,
+		Timeout:      google.Timeout,
+	})
+	if err != nil {
+		return nil, closers, err
+	}
+	closers = append(closers, sheets.Close)
+	logger := slog.Default()
+	snapshots, err := snapshotService.NewService(snapshotService.Params{Spreadsheets: sheets, Sources: sources, Logger: logger})
+	if err != nil {
+		return nil, closers, err
+	}
+	engine, err := cronService.ParseEngine(cfg.Cron.Engine)
+	if err != nil {
+		return nil, closers, err
+	}
+	params, err := cronService.Params(engine, []cronService.Job{{
+		Name:     snapshotJobName,
+		Interval: cfg.Snapshot.Interval,
+		Timeout:  cfg.Snapshot.Timeout,
+		Run: func(ctx context.Context) error {
+			_, err := snapshots.Run(ctx)
+			if errors.Is(err, snapshotService.ErrAlreadyRunning) {
+				return nil
+			}
+			return err
+		},
+	}}, logger)
+	if err != nil {
+		return nil, closers, err
+	}
+	scheduler, err := cronService.NewService(params)
+	if err != nil {
+		return nil, closers, err
+	}
+	if err := scheduler.Start(); err != nil {
+		return nil, closers, err
+	}
+	closers = append(closers, scheduler.Stop)
+	return snapshots, closers, nil
+}
+
+func snapshotSources(users usersRepository.Repository, products productsRepository.Repository, images imagesRepository.Repository, carts cartsRepository.Repository, addresses addressRepository.Repository, orders ordersRepository.Repository, payments paymentsRepository.Repository) []snapshotService.Source {
+	return []snapshotService.Source{
+		{Database: "users", Dump: users.Dump},
+		{Database: "products", Dump: products.Dump},
+		{Database: "images", Dump: images.Dump},
+		{Database: "carts", Dump: carts.Dump},
+		{Database: "addresses", Dump: addresses.Dump},
+		{Database: "orders", Dump: orders.Dump},
+		{Database: "payments", Dump: payments.Dump},
 	}
 }

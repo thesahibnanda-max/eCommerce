@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { errorMessage } from '@/shared/api/errors'
 import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue'
 import { CartsPanel } from './CartsPanel'
+import { BackupsPanel } from './BackupsPanel'
 import { CatalogPanel } from './CatalogPanel'
 import { ImagesPanel } from './ImagesPanel'
 import { OrdersPanel } from './OrdersPanel'
@@ -16,7 +17,15 @@ import styles from './AdminPage.module.css'
 export type LogEntry = { id: number; ok: boolean; title: string; detail: string }
 
 export type AdminTab =
-  'overview' | 'payments' | 'orders' | 'users' | 'carts' | 'catalog' | 'products' | 'images'
+  | 'overview'
+  | 'payments'
+  | 'orders'
+  | 'users'
+  | 'carts'
+  | 'catalog'
+  | 'products'
+  | 'images'
+  | 'backups'
 
 const tabs: { id: AdminTab; label: string }[] = [
   { id: 'overview', label: 'Overview' },
@@ -27,6 +36,7 @@ const tabs: { id: AdminTab; label: string }[] = [
   { id: 'catalog', label: 'Catalog' },
   { id: 'products', label: 'Edit products' },
   { id: 'images', label: 'Upload images' },
+  { id: 'backups', label: 'Backups' },
 ]
 
 export type AdminContext = {
@@ -134,6 +144,7 @@ export default function AdminPage() {
       {tab === 'catalog' && <CatalogPanel context={context} />}
       {tab === 'products' && <ProductsPanel context={context} />}
       {tab === 'images' && <ImagesPanel context={context} />}
+      {tab === 'backups' && <BackupsPanel context={context} />}
 
       {log.length > 0 && (
         <section className={styles.log}>

@@ -7,6 +7,7 @@ require (
 	github.com/bytedance/sonic v1.15.5
 	github.com/emersion/go-smtp v0.25.1
 	github.com/gen2brain/avif v0.6.0
+	github.com/go-co-op/gocron/v2 v2.23.2
 	github.com/go-faster/yaml v0.4.6
 	github.com/gofiber/fiber/v3 v3.7.0
 	github.com/google/uuid v1.6.0
@@ -73,6 +74,7 @@ require (
 	github.com/google/s2a-go v0.1.11 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.25 // indirect
 	github.com/googleapis/gax-go/v2 v2.27.0 // indirect
+	github.com/jonboulle/clockwork v0.5.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.20.3 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
@@ -85,6 +87,7 @@ require (
 	github.com/ncruces/go-strftime v1.0.0 // indirect
 	github.com/philhofer/fwd v1.2.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/tetratelabs/wazero v1.12.0 // indirect
 	github.com/tinylib/msgp v1.6.5 // indirect

@@ -113,6 +113,8 @@ func newApp(h handler.Handler) *fiber.App {
 	v1.Post("/admin/images/batch-delete", h.AdminDeleteImages)
 	v1.Delete("/admin/images/:id", h.AdminDeleteImage)
 	v1.Get("/admin/overview", h.AdminOverview)
+	v1.Get("/admin/snapshot", h.AdminSnapshotStatus)
+	v1.Post("/admin/snapshot", h.AdminRunSnapshot)
 	v1.Get("/admin/users", h.AdminListUsers)
 	v1.Get("/admin/users/:id", h.AdminGetUser)
 	v1.Get("/admin/carts", h.AdminListCarts)

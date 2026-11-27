@@ -230,3 +230,27 @@ func (h *handler) AdminSetTracking(c fiber.Ctx) error {
 	}
 	return respond(c, http.StatusOK, resp)
 }
+
+func (h *handler) AdminSnapshotStatus(c fiber.Ctx) error {
+	key, err := h.adminAuthed(c)
+	if err != nil {
+		return h.fail(c, err)
+	}
+	resp, err := h.adminOps.SnapshotStatus(c.Context(), adminOperationsService.KeyRequest{AdminKey: key})
+	if err != nil {
+		return h.fail(c, err)
+	}
+	return respond(c, http.StatusOK, resp)
+}
+
+func (h *handler) AdminRunSnapshot(c fiber.Ctx) error {
+	key, err := h.adminAuthed(c)
+	if err != nil {
+		return h.fail(c, err)
+	}
+	resp, err := h.adminOps.RunSnapshot(c.Context(), adminOperationsService.KeyRequest{AdminKey: key})
+	if err != nil {
+		return h.fail(c, err)
+	}
+	return respond(c, http.StatusOK, resp)
+}

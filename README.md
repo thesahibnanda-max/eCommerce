@@ -87,6 +87,8 @@ Secrets live in `.env`. `config.yaml` refers to them as `${NAME}`, and they're f
 | `ADMIN_KEY` | Unlocks `/admin` and the admin API |
 | `SMTP_SENDER_N_EMAIL`, `SMTP_SENDER_N_USERNAME`, `SMTP_SENDER_N_PASSWORD` | Address, login and app password for mail senders 1 and 2 |
 | `INSTAMOJO_CLIENT_ID`, `INSTAMOJO_CLIENT_SECRET`, `INSTAMOJO_PRIVATE_SALT` | Instamojo API credentials and webhook salt. Required while the provider is `INSTAMOJO` |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` | Google sign-in for spreadsheet snapshots. Leave empty to turn snapshots off |
+| `GOOGLE_DRIVE_FOLDER_ID` | Optional Drive folder for the snapshot spreadsheets |
 
 Variables already set in the environment win over `.env`. If one is missing entirely, the app refuses to start and names it.
 
@@ -206,6 +208,23 @@ Set `payments.provider` in config:
 
 - **`INSTAMOJO`**: hosted checkout on `api.instamojo.com`. The customer pays on Instamojo's page and comes back to `${STORE_URL}/payments/return`. Payments confirm themselves through the webhook at `${STORE_URL}/v1/payments/webhook`, and a background job keeps polling until the payment settles or the window closes. Needs the three `INSTAMOJO_*` secrets, and `STORE_URL` must be the public https address so Instamojo can reach the webhook. Instamojo no longer runs a separate test environment, so these are live keys.
 - **`SELF_UPI`** (current): customers pay your UPI ID and you confirm by hand in `/admin`. The QR and UPI ID come from `backend/package/clients/self_upi/self_upi.json`.
+
+## Google Sheets snapshots
+
+Every database is copied to Google Sheets: one spreadsheet per database, named "<company> snapshot - <database>", one tab per bbolt bucket or SQLite table, and rows of **Key | Snapshot time | JSON**. Each run overwrites the same files, and Google's version history keeps the older ones.
+
+- **Runs:** automatically every `snapshot.interval` (6h), and on demand from `/admin` → **Backups** → *Snapshot everything to Google Sheets*.
+- **Left out:** password hashes and salts are redacted. Image bytes and payment screenshots are skipped, because they're bigger than a Sheets cell.
+- **Scheduler:** `cron.engine` picks `GOCRON` (go-co-op/gocron v2) or `ROBFIG` (robfig/cron v3). Only the chosen one is created, and runs never overlap.
+- **Access:** the app asks only for the `drive.file` permission, so it can see the spreadsheets it created and nothing else in your Drive.
+
+Setup, once:
+
+1. In Google Cloud, enable the **Google Drive API** and **Google Sheets API**, and create an **OAuth client ID** of type **Desktop app**.
+2. Put its ID and secret in `.env` as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+3. Run `go run ./scripts/google_refresh_token` in your own terminal, sign in with the Google account that should own the spreadsheets, and copy the printed `GOOGLE_REFRESH_TOKEN` into `.env`.
+4. Publish the OAuth consent screen to **Production**. In Testing mode, Google expires refresh tokens after about 7 days. `drive.file` doesn't need Google's review.
+5. Add the same variables to Render's environment.
 
 ## Tests
 

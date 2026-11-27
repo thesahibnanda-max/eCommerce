@@ -2,6 +2,7 @@ package addressRepository
 
 import (
 	"context"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"os"
 	"path/filepath"
 	"time"
@@ -28,6 +29,7 @@ type Repository interface {
 	SetDefaultAddress(ctx context.Context, userID, addressID string) (Model, error)
 	DeleteAddress(ctx context.Context, userID, addressID string) error
 	DeleteAllAddresses(ctx context.Context, userID string) (int, error)
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

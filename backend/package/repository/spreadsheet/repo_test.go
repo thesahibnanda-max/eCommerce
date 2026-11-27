@@ -375,7 +375,7 @@ func TestReplaceDatabase_CreatesFileAndWritesRows(t *testing.T) {
 	if res.SpreadsheetID == "" || res.URL != spreadsheetURL+res.SpreadsheetID || res.Sheets != 2 || res.Rows != 2 {
 		t.Fatalf("result = %+v", res)
 	}
-	if fake.creates != 1 || fake.names[res.SpreadsheetID] != defaultTitlePrefix+" - users" {
+	if fake.creates != 1 || fake.names[res.SpreadsheetID] != "eCommerce snapshot - users" {
 		t.Fatalf("creates=%d names=%v", fake.creates, fake.names)
 	}
 	tabs := fake.tabs(res.SpreadsheetID)
@@ -409,7 +409,7 @@ func TestReplaceDatabase_CreatesFileAndWritesRows(t *testing.T) {
 
 func TestReplaceDatabase_SecondSnapshotOverwritesSameFile(t *testing.T) {
 	fake := newFakeGoogle()
-	r := newTestRepo(t, fake, Config{TitlePrefix: "Shop"})
+	r := newTestRepo(t, fake, Config{CompanyName: "Aesthetic Indians"})
 	first, err := r.ReplaceDatabase(context.Background(), Snapshot{Database: "orders", TakenAt: takenAt, Sheets: []Sheet{
 		{Name: "orders", Rows: rowsOf(5, "o")},
 		{Name: "old_tab", Rows: rowsOf(1, "x")},
@@ -423,6 +423,9 @@ func TestReplaceDatabase_SecondSnapshotOverwritesSameFile(t *testing.T) {
 	}})
 	if err != nil {
 		t.Fatal(err)
+	}
+	if fake.names[first.SpreadsheetID] != "Aesthetic Indians snapshot - orders" {
+		t.Fatalf("title = %q", fake.names[first.SpreadsheetID])
 	}
 	if first.SpreadsheetID != second.SpreadsheetID || fake.creates != 1 || fake.lists != 1 {
 		t.Fatalf("ids %s/%s creates=%d lists=%d", first.SpreadsheetID, second.SpreadsheetID, fake.creates, fake.lists)

@@ -98,3 +98,17 @@ payments:
     webhookURL: "${STORE_URL}/v1/payments/webhook"
   upi:
     payeeName: "Aesthetic Indians"
+
+google:
+  clientID: "${GOOGLE_CLIENT_ID}"
+  clientSecret: "${GOOGLE_CLIENT_SECRET}"
+  refreshToken: "${GOOGLE_REFRESH_TOKEN}"
+  folderID: "${GOOGLE_DRIVE_FOLDER_ID}"
+  timeout: 30s
+
+snapshot:
+  interval: 6h
+  timeout: 10m
+
+cron:
+  engine: "GOCRON"

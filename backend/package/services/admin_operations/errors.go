@@ -9,6 +9,7 @@ const (
 	ErrAdminKeyRequired  = Error("adminOperationsService: admin key is required")
 	ErrDependencyMissing = Error("adminOperationsService: a required dependency is missing")
 	ErrUnauthorized      = Error("adminOperationsService: invalid admin key")
+	ErrSnapshotsDisabled = Error("adminOperationsService: google sheets snapshots are not configured")
 )
 
 type Error string

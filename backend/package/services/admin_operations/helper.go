@@ -5,6 +5,7 @@ import (
 	"crypto/subtle"
 	"errors"
 	"strings"
+	"time"
 
 	cartsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/carts"
 	imagesRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/images"
@@ -109,4 +110,15 @@ func toImage(m imagesRepository.Model) Image {
 		Metadata:     m.Metadata,
 		CreatedAt:    m.CreatedAt,
 	}
+}
+
+func humanDuration(d time.Duration) string {
+	out := d.String()
+	if strings.HasSuffix(out, "m0s") {
+		out = strings.TrimSuffix(out, "0s")
+	}
+	if strings.HasSuffix(out, "h0m") {
+		out = strings.TrimSuffix(out, "0m")
+	}
+	return out
 }

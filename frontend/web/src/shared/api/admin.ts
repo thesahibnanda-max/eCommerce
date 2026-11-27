@@ -14,6 +14,7 @@ import type {
   Product,
   ProductInput,
   ProductUpdateInput,
+  SnapshotStatus,
 } from './types'
 
 export function createProduct(adminKey: string, product: ProductInput): Promise<Product> {
@@ -243,4 +244,15 @@ export function adminSetTracking(
     adminKey,
     body: tracking,
   }).then((data) => data.order)
+}
+
+export function adminSnapshotStatus(
+  adminKey: string,
+  signal?: AbortSignal,
+): Promise<SnapshotStatus> {
+  return request<SnapshotStatus>('/admin/snapshot', { adminKey, signal })
+}
+
+export function adminRunSnapshot(adminKey: string): Promise<SnapshotStatus> {
+  return request<SnapshotStatus>('/admin/snapshot', { method: 'POST', adminKey })
 }

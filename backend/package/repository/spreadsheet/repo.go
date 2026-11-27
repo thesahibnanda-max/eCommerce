@@ -17,7 +17,8 @@ import (
 )
 
 const (
-	defaultTitlePrefix = "Aesthetic Indians snapshot"
+	defaultCompanyName = "eCommerce"
+	titleSuffix        = " snapshot"
 	spreadsheetMIME    = "application/vnd.google-apps.spreadsheet"
 	spreadsheetURL     = "https://docs.google.com/spreadsheets/d/"
 	valueInputRaw      = "RAW"
@@ -81,15 +82,15 @@ func newRepositoryWith(ctx context.Context, cfg Config, sheetsOpts, driveOpts []
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrRequestFailed, err)
 	}
-	prefix := strings.TrimSpace(cfg.TitlePrefix)
-	if prefix == "" {
-		prefix = defaultTitlePrefix
+	company := strings.TrimSpace(cfg.CompanyName)
+	if company == "" {
+		company = defaultCompanyName
 	}
 	return &repository{
 		sheets:      sheetsService,
 		drive:       driveService,
 		folderID:    strings.TrimSpace(cfg.FolderID),
-		titlePrefix: prefix,
+		titlePrefix: company + titleSuffix,
 		chunkBytes:  defaultChunkBytes,
 		backoff:     firstBackoff,
 		ids:         make(map[string]string),

@@ -2,7 +2,9 @@ package adminOperationsService
 
 import (
 	"context"
+	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	"strings"
+	"time"
 
 	addressRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/address"
 	cartsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/carts"
@@ -30,32 +32,40 @@ type Service interface {
 	GetPayment(ctx context.Context, request IDRequest) (ordersService.PaymentResponse, error)
 	GetPaymentProof(ctx context.Context, request IDRequest) (ProofImage, error)
 	DecidePayment(ctx context.Context, request DecidePaymentRequest) (ordersService.PaymentResponse, error)
+	SnapshotStatus(ctx context.Context, request KeyRequest) (SnapshotResponse, error)
+	RunSnapshot(ctx context.Context, request KeyRequest) (SnapshotResponse, error)
 }
 
 type Params struct {
-	AdminKey        string
-	Users           usersRepository.Repository
-	Products        productsRepository.Repository
-	Images          imagesRepository.Repository
-	Carts           cartsRepository.Repository
-	Addresses       addressRepository.Repository
-	Orders          ordersRepository.Repository
-	Payments        paymentsRepository.Repository
-	OrdersService   ordersService.Service
-	PaymentProvider string
+	AdminKey         string
+	Users            usersRepository.Repository
+	Products         productsRepository.Repository
+	Images           imagesRepository.Repository
+	Carts            cartsRepository.Repository
+	Addresses        addressRepository.Repository
+	Orders           ordersRepository.Repository
+	Payments         paymentsRepository.Repository
+	OrdersService    ordersService.Service
+	PaymentProvider  string
+	Snapshots        snapshotService.Service
+	SnapshotInterval time.Duration
+	SnapshotTimeout  time.Duration
 }
 
 type service struct {
-	adminKey        string
-	users           usersRepository.Repository
-	products        productsRepository.Repository
-	images          imagesRepository.Repository
-	carts           cartsRepository.Repository
-	addresses       addressRepository.Repository
-	orders          ordersRepository.Repository
-	payments        paymentsRepository.Repository
-	ordersSvc       ordersService.Service
-	paymentProvider string
+	adminKey         string
+	users            usersRepository.Repository
+	products         productsRepository.Repository
+	images           imagesRepository.Repository
+	carts            cartsRepository.Repository
+	addresses        addressRepository.Repository
+	orders           ordersRepository.Repository
+	payments         paymentsRepository.Repository
+	ordersSvc        ordersService.Service
+	paymentProvider  string
+	snapshots        snapshotService.Service
+	snapshotInterval time.Duration
+	snapshotTimeout  time.Duration
 }
 
 func NewService(p Params) (Service, error) {
@@ -63,20 +73,26 @@ func NewService(p Params) (Service, error) {
 	if adminKey == "" {
 		return nil, ErrAdminKeyRequired
 	}
+	if p.Snapshots != nil && (p.SnapshotInterval <= 0 || p.SnapshotTimeout <= 0) {
+		return nil, ErrDependencyMissing
+	}
 	if p.Users == nil || p.Products == nil || p.Images == nil || p.Carts == nil || p.Addresses == nil || p.Orders == nil || p.Payments == nil || p.OrdersService == nil {
 		return nil, ErrDependencyMissing
 	}
 	return &service{
-		adminKey:        adminKey,
-		users:           p.Users,
-		products:        p.Products,
-		images:          p.Images,
-		carts:           p.Carts,
-		addresses:       p.Addresses,
-		orders:          p.Orders,
-		payments:        p.Payments,
-		ordersSvc:       p.OrdersService,
-		paymentProvider: p.PaymentProvider,
+		adminKey:         adminKey,
+		users:            p.Users,
+		products:         p.Products,
+		images:           p.Images,
+		carts:            p.Carts,
+		addresses:        p.Addresses,
+		orders:           p.Orders,
+		payments:         p.Payments,
+		ordersSvc:        p.OrdersService,
+		paymentProvider:  p.PaymentProvider,
+		snapshots:        p.Snapshots,
+		snapshotInterval: p.SnapshotInterval,
+		snapshotTimeout:  p.SnapshotTimeout,
 	}, nil
 }
 

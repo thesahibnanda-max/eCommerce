@@ -1,6 +1,7 @@
 package adminOperationsService
 
 import (
+	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	"time"
 
 	addressesService "github.com/thesahibnanda-max/eCommerce/backend/package/services/addresses"
@@ -173,4 +174,12 @@ type SetTrackingRequest struct {
 	Courier  string `json:"courier"`
 	Number   string `json:"number"`
 	URL      string `json:"url"`
+}
+
+type SnapshotResponse struct {
+	Configured bool                    `json:"configured"`
+	Interval   string                  `json:"interval,omitempty"`
+	Running    bool                    `json:"running"`
+	Last       *snapshotService.Result `json:"last,omitempty"`
+	Result     *snapshotService.Result `json:"result,omitempty"`
 }

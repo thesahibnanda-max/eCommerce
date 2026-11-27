@@ -2,6 +2,7 @@ package cartsRepository
 
 import (
 	"context"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"os"
 	"path/filepath"
 	"time"
@@ -21,6 +22,7 @@ type Repository interface {
 	UpdateCart(ctx context.Context, userID string, mutate func(Model) (Model, error)) (Model, error)
 	DeleteCart(ctx context.Context, userID string) error
 	ListCarts(ctx context.Context, offset, limit int) ([]Model, int, error)
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

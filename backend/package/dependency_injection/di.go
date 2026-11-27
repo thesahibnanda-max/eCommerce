@@ -39,6 +39,7 @@ const (
 	securityStartTLS     = "starttls"
 	securitySSL          = "ssl"
 	securityNone         = "none"
+	snapshotJobName      = "snapshot-all"
 )
 
 //go:embed config.yaml
@@ -205,17 +206,25 @@ func NewApp(ctx context.Context) (App, error) {
 	if err != nil {
 		return nil, closeOnError(err, closeFns)
 	}
+	snapshots, snapshotClosers, err := newSnapshots(ctx, config, snapshotSources(usersRepo, productsRepo, imagesRepo, cartsRepo, addressRepo, ordersRepo, paymentsRepo))
+	closeFns = append(closeFns, snapshotClosers...)
+	if err != nil {
+		return nil, closeOnError(err, closeFns)
+	}
 	adminOpsSvc, err := adminOperationsService.NewService(adminOperationsService.Params{
-		AdminKey:        config.Admin.Key,
-		Users:           usersRepo,
-		Products:        productsRepo,
-		Images:          imagesRepo,
-		Carts:           cartsRepo,
-		Addresses:       addressRepo,
-		Orders:          ordersRepo,
-		Payments:        paymentsRepo,
-		OrdersService:   ordersSvc,
-		PaymentProvider: gateway.Provider().String(),
+		AdminKey:         config.Admin.Key,
+		Users:            usersRepo,
+		Products:         productsRepo,
+		Images:           imagesRepo,
+		Carts:            cartsRepo,
+		Addresses:        addressRepo,
+		Orders:           ordersRepo,
+		Payments:         paymentsRepo,
+		OrdersService:    ordersSvc,
+		PaymentProvider:  gateway.Provider().String(),
+		Snapshots:        snapshots,
+		SnapshotInterval: config.Snapshot.Interval,
+		SnapshotTimeout:  config.Snapshot.Timeout,
 	})
 	if err != nil {
 		return nil, closeOnError(err, closeFns)

@@ -136,6 +136,10 @@ func (f *fakeHandler) PaymentWebhook(c fiber.Ctx) error { return f.hit(c, "Payme
 func (f *fakeHandler) PaymentRedirect(c fiber.Ctx) error { return f.hit(c, "PaymentRedirect") }
 
 func (f *fakeHandler) AdminOverview(c fiber.Ctx) error { return f.hit(c, "AdminOverview") }
+func (f *fakeHandler) AdminSnapshotStatus(c fiber.Ctx) error {
+	return f.hit(c, "AdminSnapshotStatus")
+}
+func (f *fakeHandler) AdminRunSnapshot(c fiber.Ctx) error { return f.hit(c, "AdminRunSnapshot") }
 
 func (f *fakeHandler) AdminListUsers(c fiber.Ctx) error { return f.hit(c, "AdminListUsers") }
 
@@ -286,6 +290,8 @@ func TestRoutes(t *testing.T) {
 		{"POST", "/v1/admin/images/batch-delete", "AdminDeleteImages|"},
 		{"DELETE", "/v1/admin/images/i1", "AdminDeleteImage|i1"},
 		{"GET", "/v1/admin/overview", "AdminOverview|"},
+		{"GET", "/v1/admin/snapshot", "AdminSnapshotStatus|"},
+		{"POST", "/v1/admin/snapshot", "AdminRunSnapshot|"},
 		{"GET", "/v1/admin/users", "AdminListUsers|"},
 		{"GET", "/v1/admin/users/u1", "AdminGetUser|u1"},
 		{"GET", "/v1/admin/carts", "AdminListCarts|"},

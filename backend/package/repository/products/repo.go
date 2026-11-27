@@ -2,6 +2,7 @@ package productsRepository
 
 import (
 	"context"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"os"
 	"path/filepath"
 	"strings"
@@ -42,6 +43,7 @@ type Repository interface {
 	SuggestQuery(ctx context.Context, text string) (string, error)
 	RecommendProducts(ctx context.Context, productID string, limit int) ([]Model, error)
 	AdjustStock(ctx context.Context, changes []StockChange) ([]Model, error)
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

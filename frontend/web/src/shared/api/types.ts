@@ -361,3 +361,26 @@ export type AdminUserDetail = {
   cart: AdminCart
   orders: Order[]
 }
+
+export type SnapshotDatabaseResult = {
+  database: string
+  url?: string
+  sheets: number
+  rows: number
+  error?: string
+}
+
+export type SnapshotResult = {
+  started_at: string
+  finished_at: string
+  databases: SnapshotDatabaseResult[]
+  failed: number
+}
+
+export type SnapshotStatus = {
+  configured: boolean
+  interval?: string
+  running: boolean
+  last?: SnapshotResult
+  result?: SnapshotResult
+}

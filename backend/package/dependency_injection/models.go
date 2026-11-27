@@ -62,6 +62,26 @@ type configStruct struct {
 	} `yaml:"otp"`
 	RateLimit rateLimitConfig `yaml:"rateLimit"`
 	Payments  paymentsConfig  `yaml:"payments"`
+	Google    googleConfig    `yaml:"google"`
+	Snapshot  snapshotConfig  `yaml:"snapshot"`
+	Cron      cronConfig      `yaml:"cron"`
+}
+
+type googleConfig struct {
+	ClientID     string        `yaml:"clientID"`
+	ClientSecret string        `yaml:"clientSecret"`
+	RefreshToken string        `yaml:"refreshToken"`
+	FolderID     string        `yaml:"folderID"`
+	Timeout      time.Duration `yaml:"timeout"`
+}
+
+type snapshotConfig struct {
+	Interval time.Duration `yaml:"interval"`
+	Timeout  time.Duration `yaml:"timeout"`
+}
+
+type cronConfig struct {
+	Engine string `yaml:"engine"`
 }
 
 type paymentsConfig struct {

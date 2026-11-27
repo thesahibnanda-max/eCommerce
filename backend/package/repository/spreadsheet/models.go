@@ -7,7 +7,7 @@ type Config struct {
 	ClientSecret string
 	RefreshToken string
 	FolderID     string
-	TitlePrefix  string
+	CompanyName  string
 	Timeout      time.Duration
 }
 

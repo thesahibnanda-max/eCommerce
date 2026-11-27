@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"image"
 	"os"
 	"path/filepath"
@@ -43,6 +44,7 @@ type Repository interface {
 	ListImages(ctx context.Context, offset, limit int) ([]Model, int, error)
 	DeleteImage(ctx context.Context, id string) error
 	DeleteImages(ctx context.Context, ids []string) error
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

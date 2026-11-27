@@ -15,6 +15,7 @@ import (
 	imagesService "github.com/thesahibnanda-max/eCommerce/backend/package/services/images"
 	ordersService "github.com/thesahibnanda-max/eCommerce/backend/package/services/orders"
 	productsService "github.com/thesahibnanda-max/eCommerce/backend/package/services/products"
+	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	staticInfoService "github.com/thesahibnanda-max/eCommerce/backend/package/services/static_info"
 	usersService "github.com/thesahibnanda-max/eCommerce/backend/package/services/users"
 	"github.com/thesahibnanda-max/eCommerce/backend/package/utils"
@@ -64,6 +65,7 @@ func defaultRules() []httpErrorHandler.Rule {
 			{paymentGateway.ErrNotSupported, "not_supported", "not supported by the current payment provider"},
 		}},
 		{http.StatusConflict, []rule{
+			{snapshotService.ErrAlreadyRunning, "snapshot_running", "a snapshot is already running"},
 			{usersService.ErrEmailAlreadyExists, "email_already_exists", "email is already registered"},
 			{usersService.ErrPhoneAlreadyExists, "phone_number_already_exists", "phone number is already registered"},
 			{usersService.ErrEmailAlreadyValidated, "email_already_validated", "email is already validated"},
@@ -104,6 +106,9 @@ func defaultRules() []httpErrorHandler.Rule {
 		{http.StatusTooManyRequests, []rule{
 			{usersService.ErrOTPResendTooSoon, "otp_resend_too_soon", "please wait before requesting another otp"},
 			{usersService.ErrOTPTooManyAttempts, "otp_too_many_attempts", "too many invalid attempts, request a new otp"},
+		}},
+		{http.StatusServiceUnavailable, []rule{
+			{adminOperationsService.ErrSnapshotsDisabled, "snapshot_not_configured", "google sheets snapshots are not configured"},
 		}},
 		{http.StatusBadGateway, []rule{
 			{usersService.ErrOTPSendFailed, "otp_send_failed", "could not send otp"},

@@ -8,6 +8,7 @@ import (
 	_ "embed"
 	"errors"
 	"fmt"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,6 +35,7 @@ type Repository interface {
 	RecordPaymentEvent(ctx context.Context, orderID string, event PaymentEvent) (Model, error)
 	UpdateMetadata(ctx context.Context, orderID string, mutate func(map[string]any) (map[string]any, error)) (Model, error)
 	CountOrdersByState(ctx context.Context) (map[OrderState]int64, error)
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

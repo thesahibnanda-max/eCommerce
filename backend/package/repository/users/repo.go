@@ -3,6 +3,7 @@ package usersRepository
 import (
 	"context"
 	"fmt"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"os"
 	"path/filepath"
 	"strings"
@@ -31,6 +32,7 @@ type Repository interface {
 	GetUserByEmailAndPassword(ctx context.Context, email string, password string) (Model, error)
 	GetUserByPhoneNumberAndPassword(ctx context.Context, phoneNumber string, password string) (Model, error)
 	ListUsers(ctx context.Context, offset, limit int) ([]Model, int, error)
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

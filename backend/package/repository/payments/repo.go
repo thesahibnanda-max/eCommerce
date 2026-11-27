@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	_ "embed"
 	"errors"
+	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	"os"
 	"path/filepath"
 	"time"
@@ -31,6 +32,7 @@ type Repository interface {
 	Update(ctx context.Context, paymentID string, patch Patch, event EventInput) (Model, error)
 	SubmitProof(ctx context.Context, paymentID string, proof ProofInput) (Model, error)
 	GetProofImage(ctx context.Context, paymentID string) ([]byte, string, error)
+	Dump(ctx context.Context) ([]dumpRepository.Table, error)
 	Close() error
 }
 

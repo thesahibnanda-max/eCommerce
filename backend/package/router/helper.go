@@ -77,6 +77,8 @@ func (r *routerImpl) registerRoutes() {
 			admin.Post("/images/batch-delete", r.handler.AdminDeleteImages)
 			admin.Delete("/images/:id", r.handler.AdminDeleteImage)
 			admin.Get("/overview", r.handler.AdminOverview)
+			admin.Get("/snapshot", r.handler.AdminSnapshotStatus)
+			admin.Post("/snapshot", r.handler.AdminRunSnapshot)
 			admin.Get("/users", r.handler.AdminListUsers)
 			admin.Get("/users/:id", r.handler.AdminGetUser)
 			admin.Get("/carts", r.handler.AdminListCarts)
