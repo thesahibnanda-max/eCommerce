@@ -115,6 +115,9 @@ func newApp(h handler.Handler) *fiber.App {
 	v1.Get("/admin/overview", h.AdminOverview)
 	v1.Get("/admin/snapshot", h.AdminSnapshotStatus)
 	v1.Post("/admin/snapshot", h.AdminRunSnapshot)
+	v1.Post("/admin/google/connect", h.AdminConnectGoogle)
+	v1.Get("/admin/google/callback", h.AdminGoogleCallback)
+	v1.Delete("/admin/google", h.AdminDisconnectGoogle)
 	v1.Get("/admin/users", h.AdminListUsers)
 	v1.Get("/admin/users/:id", h.AdminGetUser)
 	v1.Get("/admin/carts", h.AdminListCarts)
@@ -174,6 +177,16 @@ func newFixture(t *testing.T) fixture {
 }
 
 func newFixtureWithLimits(t *testing.T, rules map[string]rateLimiter.Rule) fixture {
+	t.Helper()
+	return buildFixture(t, rules, false)
+}
+
+func newGoogleFixture(t *testing.T) fixture {
+	t.Helper()
+	return buildFixture(t, nil, true)
+}
+
+func buildFixture(t *testing.T, rules map[string]rateLimiter.Rule, withGoogle bool) fixture {
 	t.Helper()
 	dir := t.TempDir()
 	usersRepo, err := usersRepository.NewRepository([]string{dir, "users.db"}, 0o600)
@@ -278,7 +291,7 @@ func newFixtureWithLimits(t *testing.T, rules map[string]rateLimiter.Rule) fixtu
 	if err != nil {
 		t.Fatal(err)
 	}
-	adminOps, err := adminOperationsService.NewService(adminOperationsService.Params{
+	adminParams := adminOperationsService.Params{
 		AdminKey:        testAdminKey,
 		Users:           usersRepo,
 		Products:        productsRepo,
@@ -289,7 +302,12 @@ func newFixtureWithLimits(t *testing.T, rules map[string]rateLimiter.Rule) fixtu
 		Payments:        paymentsRepo,
 		OrdersService:   ordersSvc,
 		PaymentProvider: gateway.Provider().String(),
-	})
+	}
+	if withGoogle {
+		adminParams.Google, adminParams.Snapshots = newGoogleServices(t, dir, usersRepo)
+		adminParams.SnapshotInterval, adminParams.SnapshotTimeout = time.Hour, time.Minute
+	}
+	adminOps, err := adminOperationsService.NewService(adminParams)
 	if err != nil {
 		t.Fatal(err)
 	}

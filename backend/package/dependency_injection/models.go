@@ -35,14 +35,15 @@ type configStruct struct {
 		Key string `yaml:"key"`
 	} `yaml:"admin"`
 	Storage struct {
-		Directory     string `yaml:"directory"`
-		Permission    string `yaml:"permission"`
-		UsersFile     string `yaml:"usersFile"`
-		ProductsFile  string `yaml:"productsFile"`
-		ImagesFile    string `yaml:"imagesFile"`
-		CartsFile     string `yaml:"cartsFile"`
-		OrdersFile    string `yaml:"ordersFile"`
-		AddressesFile string `yaml:"addressesFile"`
+		Directory       string `yaml:"directory"`
+		Permission      string `yaml:"permission"`
+		UsersFile       string `yaml:"usersFile"`
+		ProductsFile    string `yaml:"productsFile"`
+		ImagesFile      string `yaml:"imagesFile"`
+		CartsFile       string `yaml:"cartsFile"`
+		OrdersFile      string `yaml:"ordersFile"`
+		AddressesFile   string `yaml:"addressesFile"`
+		CredentialsFile string `yaml:"credentialsFile"`
 	} `yaml:"storage"`
 	Users struct {
 		IsOneValidationEnough bool `yaml:"isOneValidationEnough"`
@@ -70,7 +71,6 @@ type configStruct struct {
 type googleConfig struct {
 	ClientID     string        `yaml:"clientID"`
 	ClientSecret string        `yaml:"clientSecret"`
-	RefreshToken string        `yaml:"refreshToken"`
 	FolderID     string        `yaml:"folderID"`
 	Timeout      time.Duration `yaml:"timeout"`
 }

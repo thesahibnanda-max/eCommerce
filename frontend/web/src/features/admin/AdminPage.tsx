@@ -50,9 +50,14 @@ export type AdminContext = {
 
 let nextLog = 1
 
+function initialTab(): AdminTab {
+  const wanted = new URLSearchParams(window.location.search).get('tab')
+  return tabs.find((item) => item.id === wanted)?.id ?? 'overview'
+}
+
 export default function AdminPage() {
   const [adminKey, setAdminKey] = useState('')
-  const [tab, setTab] = useState<AdminTab>('overview')
+  const [tab, setTab] = useState<AdminTab>(initialTab)
   const [focus, setFocus] = useState<Partial<Record<AdminTab, string>>>({})
   const readKey = useDebouncedValue(adminKey.trim(), 400)
   const [log, setLog] = useState<LogEntry[]>([])

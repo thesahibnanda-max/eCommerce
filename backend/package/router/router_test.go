@@ -140,6 +140,15 @@ func (f *fakeHandler) AdminSnapshotStatus(c fiber.Ctx) error {
 	return f.hit(c, "AdminSnapshotStatus")
 }
 func (f *fakeHandler) AdminRunSnapshot(c fiber.Ctx) error { return f.hit(c, "AdminRunSnapshot") }
+func (f *fakeHandler) AdminConnectGoogle(c fiber.Ctx) error {
+	return f.hit(c, "AdminConnectGoogle")
+}
+func (f *fakeHandler) AdminGoogleCallback(c fiber.Ctx) error {
+	return f.hit(c, "AdminGoogleCallback")
+}
+func (f *fakeHandler) AdminDisconnectGoogle(c fiber.Ctx) error {
+	return f.hit(c, "AdminDisconnectGoogle")
+}
 
 func (f *fakeHandler) AdminListUsers(c fiber.Ctx) error { return f.hit(c, "AdminListUsers") }
 
@@ -292,6 +301,9 @@ func TestRoutes(t *testing.T) {
 		{"GET", "/v1/admin/overview", "AdminOverview|"},
 		{"GET", "/v1/admin/snapshot", "AdminSnapshotStatus|"},
 		{"POST", "/v1/admin/snapshot", "AdminRunSnapshot|"},
+		{"POST", "/v1/admin/google/connect", "AdminConnectGoogle|"},
+		{"GET", "/v1/admin/google/callback", "AdminGoogleCallback|"},
+		{"DELETE", "/v1/admin/google", "AdminDisconnectGoogle|"},
 		{"GET", "/v1/admin/users", "AdminListUsers|"},
 		{"GET", "/v1/admin/users/u1", "AdminGetUser|u1"},
 		{"GET", "/v1/admin/carts", "AdminListCarts|"},

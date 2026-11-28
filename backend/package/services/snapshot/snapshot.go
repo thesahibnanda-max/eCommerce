@@ -18,14 +18,18 @@ type Service interface {
 	Status() Status
 }
 
+type SpreadsheetsProvider interface {
+	Spreadsheets(ctx context.Context) (spreadsheetRepository.Repository, error)
+}
+
 type Params struct {
-	Spreadsheets spreadsheetRepository.Repository
+	Spreadsheets SpreadsheetsProvider
 	Sources      []Source
 	Logger       *slog.Logger
 }
 
 type service struct {
-	spreadsheets spreadsheetRepository.Repository
+	spreadsheets SpreadsheetsProvider
 	sources      []Source
 	logger       *slog.Logger
 	now          func() (time.Time, error)
@@ -66,6 +70,10 @@ func (s *service) Run(ctx context.Context) (result Result, err error) {
 		return Result{}, ErrAlreadyRunning
 	}
 	defer s.run.Unlock()
+	sheets, err := s.spreadsheets.Spreadsheets(ctx)
+	if err != nil {
+		return Result{}, err
+	}
 	s.setRunning(true)
 	defer s.setRunning(false)
 
@@ -76,7 +84,7 @@ func (s *service) Run(ctx context.Context) (result Result, err error) {
 	result = Result{StartedAt: startedAt, Databases: make([]DatabaseResult, 0, len(s.sources))}
 	var failures []error
 	for _, source := range s.sources {
-		outcome, err := s.snapshot(ctx, source, startedAt)
+		outcome, err := s.snapshot(ctx, sheets, source, startedAt)
 		if err != nil {
 			outcome.Error = err.Error()
 			result.Failed++
@@ -98,7 +106,7 @@ func (s *service) Run(ctx context.Context) (result Result, err error) {
 	return result, nil
 }
 
-func (s *service) snapshot(ctx context.Context, source Source, takenAt time.Time) (DatabaseResult, error) {
+func (s *service) snapshot(ctx context.Context, spreadsheets spreadsheetRepository.Repository, source Source, takenAt time.Time) (DatabaseResult, error) {
 	outcome := DatabaseResult{Database: source.Database}
 	tables, err := source.Dump(ctx)
 	if err != nil {
@@ -115,7 +123,7 @@ func (s *service) snapshot(ctx context.Context, source Source, takenAt time.Time
 	if len(sheets) == 0 {
 		sheets = append(sheets, spreadsheetRepository.Sheet{Name: emptySheetName})
 	}
-	written, err := s.spreadsheets.ReplaceDatabase(ctx, spreadsheetRepository.Snapshot{Database: source.Database, TakenAt: takenAt, Sheets: sheets})
+	written, err := spreadsheets.ReplaceDatabase(ctx, spreadsheetRepository.Snapshot{Database: source.Database, TakenAt: takenAt, Sheets: sheets})
 	if err != nil {
 		return outcome, err
 	}

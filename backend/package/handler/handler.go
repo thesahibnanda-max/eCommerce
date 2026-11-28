@@ -105,6 +105,9 @@ type Handler interface {
 	AdminOverview(c fiber.Ctx) error
 	AdminSnapshotStatus(c fiber.Ctx) error
 	AdminRunSnapshot(c fiber.Ctx) error
+	AdminConnectGoogle(c fiber.Ctx) error
+	AdminGoogleCallback(c fiber.Ctx) error
+	AdminDisconnectGoogle(c fiber.Ctx) error
 	AdminListUsers(c fiber.Ctx) error
 	AdminGetUser(c fiber.Ctx) error
 	AdminListCarts(c fiber.Ctx) error

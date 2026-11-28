@@ -3,6 +3,7 @@ package dependencyInjection
 import (
 	"context"
 	"errors"
+	credentialsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/credentials"
 	dumpRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/dump"
 	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	"os"
@@ -17,7 +18,6 @@ var testEnv = map[string]string{
 	"DATA_DIR":                "data",
 	"GOOGLE_CLIENT_ID":        "",
 	"GOOGLE_CLIENT_SECRET":    "",
-	"GOOGLE_REFRESH_TOKEN":    "",
 	"GOOGLE_DRIVE_FOLDER_ID":  "",
 	"STORE_URL":               "http://localhost:4073",
 	"TOKEN_SECRET":            "test-token-secret-0123456789abcdef0123",
@@ -180,15 +180,20 @@ func Test_LimiterConfig(t *testing.T) {
 func Test_NewSnapshots(t *testing.T) {
 	config := testConfig(t)
 	sources := []snapshotService.Source{{Database: "users", Dump: func(context.Context) ([]dumpRepository.Table, error) { return nil, nil }}}
-	off, closers, err := newSnapshots(context.Background(), config, sources)
-	if err != nil || off != nil || len(closers) != 0 {
+	credentials, err := credentialsRepository.NewRepository([]string{t.TempDir(), "credentials.db"}, 0o600, "test-admin-key")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer credentials.Close()
+	google, off, closers, err := newSnapshots(context.Background(), config, credentials, sources)
+	if err != nil || off != nil || google != nil || len(closers) != 0 {
 		t.Fatalf("without google credentials snapshots should be off: %v %v %d", err, off, len(closers))
 	}
-	config.Google.ClientID, config.Google.ClientSecret, config.Google.RefreshToken = "id", "secret", "refresh"
+	config.Google.ClientID, config.Google.ClientSecret = "id", "secret"
 	for _, engine := range []string{"GOCRON", "ROBFIG"} {
 		config.Cron.Engine = engine
-		on, closers, err := newSnapshots(context.Background(), config, sources)
-		if err != nil || on == nil || len(closers) != 2 {
+		google, on, closers, err := newSnapshots(context.Background(), config, credentials, sources)
+		if err != nil || on == nil || google == nil || google.Status().Connected || len(closers) != 2 {
 			t.Fatalf("%s: snapshots on = %v %v %d", engine, err, on, len(closers))
 		}
 		if err := joinClose(closers)(); err != nil {
@@ -196,7 +201,7 @@ func Test_NewSnapshots(t *testing.T) {
 		}
 	}
 	config.Cron.Engine = "QUARTZ"
-	if _, closers, err := newSnapshots(context.Background(), config, sources); err == nil {
+	if _, _, closers, err := newSnapshots(context.Background(), config, credentials, sources); err == nil {
 		t.Fatal("unknown cron engine should fail")
 	} else {
 		_ = joinClose(closers)()

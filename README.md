@@ -87,7 +87,7 @@ Secrets live in `.env`. `config.yaml` refers to them as `${NAME}`, and they're f
 | `ADMIN_KEY` | Unlocks `/admin` and the admin API |
 | `SMTP_SENDER_N_EMAIL`, `SMTP_SENDER_N_USERNAME`, `SMTP_SENDER_N_PASSWORD` | Address, login and app password for mail senders 1 and 2 |
 | `INSTAMOJO_CLIENT_ID`, `INSTAMOJO_CLIENT_SECRET`, `INSTAMOJO_PRIVATE_SALT` | Instamojo API credentials and webhook salt. Required while the provider is `INSTAMOJO` |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` | Google sign-in for spreadsheet snapshots. Leave empty to turn snapshots off |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | OAuth web client for spreadsheet snapshots. Leave empty to turn snapshots off |
 | `GOOGLE_DRIVE_FOLDER_ID` | Optional Drive folder for the snapshot spreadsheets |
 
 Variables already set in the environment win over `.env`. If one is missing entirely, the app refuses to start and names it.
@@ -216,15 +216,16 @@ Every database is copied to Google Sheets: one spreadsheet per database, named "
 - **Runs:** automatically every `snapshot.interval` (6h), and on demand from `/admin` → **Backups** → *Snapshot everything to Google Sheets*.
 - **Left out:** password hashes and salts are redacted. Image bytes and payment screenshots are skipped, because they're bigger than a Sheets cell.
 - **Scheduler:** `cron.engine` picks `GOCRON` (go-co-op/gocron v2) or `ROBFIG` (robfig/cron v3). Only the chosen one is created, and runs never overlap.
-- **Access:** the app asks only for the `drive.file` permission, so it can see the spreadsheets it created and nothing else in your Drive.
+- **Access:** the app asks only for the `drive.file` permission (plus your email, to show who is connected), so it can see the spreadsheets it created and nothing else in your Drive.
+- **Sign-in:** Google is connected from `/admin` → **Backups** → *Connect Google Drive*. The refresh token is stored AES-GCM encrypted in `credentials.db`, with a key derived from `ADMIN_KEY`. Changing `ADMIN_KEY` means connecting again. *Disconnect* revokes the token at Google and deletes it.
 
 Setup, once:
 
-1. In Google Cloud, enable the **Google Drive API** and **Google Sheets API**, and create an **OAuth client ID** of type **Desktop app**.
-2. Put its ID and secret in `.env` as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
-3. Run `go run ./scripts/google_refresh_token` in your own terminal, sign in with the Google account that should own the spreadsheets, and copy the printed `GOOGLE_REFRESH_TOKEN` into `.env`.
-4. Publish the OAuth consent screen to **Production**. In Testing mode, Google expires refresh tokens after about 7 days. `drive.file` doesn't need Google's review.
-5. Add the same variables to Render's environment.
+1. In Google Cloud, enable the **Google Drive API** and **Google Sheets API**, and create an **OAuth client ID** of type **Web application**.
+2. Under *Authorised redirect URIs*, add `https://<your-domain>/v1/admin/google/callback`, and `http://localhost:3000/v1/admin/google/callback` for local runs. The Backups tab shows the exact URL to add.
+3. Put the client ID and secret in `.env` (and Render's environment) as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, and restart.
+4. Publish the OAuth consent screen to **Production**. In Testing mode, Google expires refresh tokens after about 7 days. These scopes don't need Google's review.
+5. Open `/admin` → **Backups** → **Connect Google Drive**, and allow access with the Google account that should own the spreadsheets.
 
 ## Tests
 

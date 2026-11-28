@@ -377,8 +377,15 @@ export type SnapshotResult = {
   failed: number
 }
 
+export type GoogleConnection = {
+  connected: boolean
+  account?: string
+  connected_at?: string
+}
+
 export type SnapshotStatus = {
   configured: boolean
+  google?: GoogleConnection
   interval?: string
   running: boolean
   last?: SnapshotResult

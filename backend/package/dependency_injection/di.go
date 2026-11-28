@@ -12,6 +12,7 @@ import (
 	rateLimiter "github.com/thesahibnanda-max/eCommerce/backend/package/rate_limiter"
 	addressRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/address"
 	cartsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/carts"
+	credentialsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/credentials"
 	imagesRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/images"
 	ordersRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/orders"
 	paymentsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/payments"
@@ -206,7 +207,12 @@ func NewApp(ctx context.Context) (App, error) {
 	if err != nil {
 		return nil, closeOnError(err, closeFns)
 	}
-	snapshots, snapshotClosers, err := newSnapshots(ctx, config, snapshotSources(usersRepo, productsRepo, imagesRepo, cartsRepo, addressRepo, ordersRepo, paymentsRepo))
+	credentialsRepo, err := credentialsRepository.NewRepository(storagePath(directory, config.Storage.CredentialsFile), permission, config.Admin.Key)
+	if err != nil {
+		return nil, closeOnError(err, closeFns)
+	}
+	closeFns = append(closeFns, credentialsRepo.Close)
+	google, snapshots, snapshotClosers, err := newSnapshots(ctx, config, credentialsRepo, snapshotSources(usersRepo, productsRepo, imagesRepo, cartsRepo, addressRepo, ordersRepo, paymentsRepo))
 	closeFns = append(closeFns, snapshotClosers...)
 	if err != nil {
 		return nil, closeOnError(err, closeFns)
@@ -223,6 +229,7 @@ func NewApp(ctx context.Context) (App, error) {
 		OrdersService:    ordersSvc,
 		PaymentProvider:  gateway.Provider().String(),
 		Snapshots:        snapshots,
+		Google:           google,
 		SnapshotInterval: config.Snapshot.Interval,
 		SnapshotTimeout:  config.Snapshot.Timeout,
 	})

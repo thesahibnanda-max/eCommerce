@@ -17,6 +17,8 @@ type fakeSheets struct {
 	fail    map[string]error
 	block   chan struct{}
 	entered chan struct{}
+
+	disconnected bool
 }
 
 func (f *fakeSheets) ReplaceDatabase(_ context.Context, snapshot spreadsheetRepository.Snapshot) (spreadsheetRepository.Result, error) {
@@ -40,6 +42,15 @@ func (f *fakeSheets) ReplaceDatabase(_ context.Context, snapshot spreadsheetRepo
 }
 
 func (f *fakeSheets) Close() error { return nil }
+
+func (f *fakeSheets) Spreadsheets(context.Context) (spreadsheetRepository.Repository, error) {
+	if f.disconnected {
+		return nil, errNotConnected
+	}
+	return f, nil
+}
+
+var errNotConnected = errors.New("not connected")
 
 func source(name string, tables []dumpRepository.Table, err error) Source {
 	return Source{Database: name, Dump: func(context.Context) ([]dumpRepository.Table, error) { return tables, err }}
@@ -132,6 +143,17 @@ func TestRun_RejectsConcurrentRuns(t *testing.T) {
 	}
 	if s.Status().Running {
 		t.Fatal("status should be idle after run")
+	}
+}
+
+func TestRun_NotConnected(t *testing.T) {
+	sheets := &fakeSheets{disconnected: true}
+	s := newTestService(t, sheets, source("users", []dumpRepository.Table{{Name: "users"}}, nil))
+	if _, err := s.Run(context.Background()); !errors.Is(err, errNotConnected) {
+		t.Fatalf("err = %v", err)
+	}
+	if status := s.Status(); status.Running || status.Last != nil {
+		t.Fatalf("status = %+v", status)
 	}
 }
 

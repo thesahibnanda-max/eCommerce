@@ -2,7 +2,6 @@ package adminOperationsService
 
 import (
 	"context"
-	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	"strings"
 	"time"
 
@@ -14,7 +13,9 @@ import (
 	productsRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/products"
 	usersRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/users"
 	addressesService "github.com/thesahibnanda-max/eCommerce/backend/package/services/addresses"
+	googleAuthService "github.com/thesahibnanda-max/eCommerce/backend/package/services/google_auth"
 	ordersService "github.com/thesahibnanda-max/eCommerce/backend/package/services/orders"
+	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 )
 
 type Service interface {
@@ -34,6 +35,9 @@ type Service interface {
 	DecidePayment(ctx context.Context, request DecidePaymentRequest) (ordersService.PaymentResponse, error)
 	SnapshotStatus(ctx context.Context, request KeyRequest) (SnapshotResponse, error)
 	RunSnapshot(ctx context.Context, request KeyRequest) (SnapshotResponse, error)
+	ConnectGoogle(ctx context.Context, request ConnectGoogleRequest) (ConnectGoogleResponse, error)
+	GoogleCallback(ctx context.Context, request GoogleCallbackRequest) (string, error)
+	DisconnectGoogle(ctx context.Context, request KeyRequest) (SnapshotResponse, error)
 }
 
 type Params struct {
@@ -48,6 +52,7 @@ type Params struct {
 	OrdersService    ordersService.Service
 	PaymentProvider  string
 	Snapshots        snapshotService.Service
+	Google           googleAuthService.Service
 	SnapshotInterval time.Duration
 	SnapshotTimeout  time.Duration
 }
@@ -64,6 +69,7 @@ type service struct {
 	ordersSvc        ordersService.Service
 	paymentProvider  string
 	snapshots        snapshotService.Service
+	google           googleAuthService.Service
 	snapshotInterval time.Duration
 	snapshotTimeout  time.Duration
 }
@@ -73,7 +79,7 @@ func NewService(p Params) (Service, error) {
 	if adminKey == "" {
 		return nil, ErrAdminKeyRequired
 	}
-	if p.Snapshots != nil && (p.SnapshotInterval <= 0 || p.SnapshotTimeout <= 0) {
+	if (p.Snapshots == nil) != (p.Google == nil) || p.Snapshots != nil && (p.SnapshotInterval <= 0 || p.SnapshotTimeout <= 0) {
 		return nil, ErrDependencyMissing
 	}
 	if p.Users == nil || p.Products == nil || p.Images == nil || p.Carts == nil || p.Addresses == nil || p.Orders == nil || p.Payments == nil || p.OrdersService == nil {
@@ -91,6 +97,7 @@ func NewService(p Params) (Service, error) {
 		ordersSvc:        p.OrdersService,
 		paymentProvider:  p.PaymentProvider,
 		snapshots:        p.Snapshots,
+		google:           p.Google,
 		snapshotInterval: p.SnapshotInterval,
 		snapshotTimeout:  p.SnapshotTimeout,
 	}, nil

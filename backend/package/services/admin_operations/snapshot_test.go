@@ -6,8 +6,42 @@ import (
 	"testing"
 	"time"
 
+	spreadsheetRepository "github.com/thesahibnanda-max/eCommerce/backend/package/repository/spreadsheet"
+	googleAuthService "github.com/thesahibnanda-max/eCommerce/backend/package/services/google_auth"
 	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 )
+
+type fakeGoogle struct {
+	status       googleAuthService.Status
+	authRequest  googleAuthService.AuthRequest
+	callback     googleAuthService.CallbackRequest
+	disconnected bool
+}
+
+func (f *fakeGoogle) Status() googleAuthService.Status { return f.status }
+
+func (f *fakeGoogle) AuthURL(_ context.Context, request googleAuthService.AuthRequest) (string, error) {
+	f.authRequest = request
+	return "https://accounts.example/auth?state=s", nil
+}
+
+func (f *fakeGoogle) Callback(_ context.Context, request googleAuthService.CallbackRequest) (string, error) {
+	f.callback = request
+	f.status.Connected = true
+	return "https://shop.example/admin", nil
+}
+
+func (f *fakeGoogle) Disconnect(context.Context) error {
+	f.disconnected = true
+	f.status = googleAuthService.Status{}
+	return nil
+}
+
+func (f *fakeGoogle) Spreadsheets(context.Context) (spreadsheetRepository.Repository, error) {
+	return nil, googleAuthService.ErrNotConnected
+}
+
+func (f *fakeGoogle) Close() error { return nil }
 
 type fakeSnapshots struct {
 	result   snapshotService.Result
@@ -26,7 +60,11 @@ func (f *fakeSnapshots) Run(ctx context.Context) (snapshotService.Result, error)
 func (f *fakeSnapshots) Status() snapshotService.Status { return f.status }
 
 func snapshotTestService(snapshots snapshotService.Service) *service {
-	return &service{adminKey: "key", snapshots: snapshots, snapshotInterval: 6 * time.Hour, snapshotTimeout: time.Minute}
+	s := &service{adminKey: "key", snapshots: snapshots, snapshotInterval: 6 * time.Hour, snapshotTimeout: time.Minute}
+	if snapshots != nil {
+		s.google = &fakeGoogle{status: googleAuthService.Status{Connected: true, Account: "owner@example.com"}}
+	}
+	return s
 }
 
 func TestRunSnapshot(t *testing.T) {
@@ -73,7 +111,7 @@ func TestRunSnapshot_SurvivesClientDisconnect(t *testing.T) {
 func TestSnapshotStatus(t *testing.T) {
 	s := snapshotTestService(&fakeSnapshots{status: snapshotService.Status{Running: true}})
 	resp, err := s.SnapshotStatus(context.Background(), KeyRequest{AdminKey: "key"})
-	if err != nil || !resp.Configured || !resp.Running || resp.Interval != "6h" {
+	if err != nil || !resp.Configured || !resp.Running || resp.Interval != "6h" || resp.Google == nil || resp.Google.Account != "owner@example.com" {
 		t.Fatalf("resp = %+v err = %v", resp, err)
 	}
 	off := snapshotTestService(nil)
@@ -83,6 +121,35 @@ func TestSnapshotStatus(t *testing.T) {
 	}
 	if _, err := off.RunSnapshot(context.Background(), KeyRequest{AdminKey: "key"}); !errors.Is(err, ErrSnapshotsDisabled) {
 		t.Fatalf("off run err = %v", err)
+	}
+}
+
+func TestGoogleConnection(t *testing.T) {
+	s := snapshotTestService(&fakeSnapshots{})
+	google := s.google.(*fakeGoogle)
+	google.status = googleAuthService.Status{}
+	req := ConnectGoogleRequest{AdminKey: "key", CallbackURL: "https://shop.example/v1/admin/google/callback", ReturnURL: "https://shop.example/admin"}
+	resp, err := s.ConnectGoogle(context.Background(), req)
+	if err != nil || resp.AuthURL == "" || google.authRequest.CallbackURL != req.CallbackURL || google.authRequest.ReturnURL != req.ReturnURL {
+		t.Fatalf("connect resp = %+v err = %v req = %+v", resp, err, google.authRequest)
+	}
+	if _, err := s.ConnectGoogle(context.Background(), ConnectGoogleRequest{AdminKey: "nope"}); !errors.Is(err, ErrUnauthorized) {
+		t.Fatalf("bad key err = %v", err)
+	}
+	back, err := s.GoogleCallback(context.Background(), GoogleCallbackRequest{State: "s", Code: "c"})
+	if err != nil || back != "https://shop.example/admin" || google.callback.State != "s" || google.callback.Code != "c" {
+		t.Fatalf("callback = %q %v %+v", back, err, google.callback)
+	}
+	status, err := s.DisconnectGoogle(context.Background(), KeyRequest{AdminKey: "key"})
+	if err != nil || !google.disconnected || status.Google == nil || status.Google.Connected {
+		t.Fatalf("disconnect = %+v %v", status, err)
+	}
+	off := snapshotTestService(nil)
+	if _, err := off.ConnectGoogle(context.Background(), req); !errors.Is(err, ErrSnapshotsDisabled) {
+		t.Fatalf("off connect err = %v", err)
+	}
+	if _, err := off.GoogleCallback(context.Background(), GoogleCallbackRequest{}); !errors.Is(err, ErrSnapshotsDisabled) {
+		t.Fatalf("off callback err = %v", err)
 	}
 }
 

@@ -1,11 +1,12 @@
 package adminOperationsService
 
 import (
-	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 	"time"
 
 	addressesService "github.com/thesahibnanda-max/eCommerce/backend/package/services/addresses"
+	googleAuthService "github.com/thesahibnanda-max/eCommerce/backend/package/services/google_auth"
 	ordersService "github.com/thesahibnanda-max/eCommerce/backend/package/services/orders"
+	snapshotService "github.com/thesahibnanda-max/eCommerce/backend/package/services/snapshot"
 )
 
 type User struct {
@@ -177,9 +178,26 @@ type SetTrackingRequest struct {
 }
 
 type SnapshotResponse struct {
-	Configured bool                    `json:"configured"`
-	Interval   string                  `json:"interval,omitempty"`
-	Running    bool                    `json:"running"`
-	Last       *snapshotService.Result `json:"last,omitempty"`
-	Result     *snapshotService.Result `json:"result,omitempty"`
+	Configured bool                      `json:"configured"`
+	Google     *googleAuthService.Status `json:"google,omitempty"`
+	Interval   string                    `json:"interval,omitempty"`
+	Running    bool                      `json:"running"`
+	Last       *snapshotService.Result   `json:"last,omitempty"`
+	Result     *snapshotService.Result   `json:"result,omitempty"`
+}
+
+type ConnectGoogleRequest struct {
+	AdminKey    string `json:"admin_key"`
+	CallbackURL string `json:"callback_url"`
+	ReturnURL   string `json:"return_url"`
+}
+
+type ConnectGoogleResponse struct {
+	AuthURL string `json:"auth_url"`
+}
+
+type GoogleCallbackRequest struct {
+	State string
+	Code  string
+	Error string
 }

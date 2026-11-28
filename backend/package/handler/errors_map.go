@@ -12,6 +12,7 @@ import (
 	adminService "github.com/thesahibnanda-max/eCommerce/backend/package/services/admin"
 	adminOperationsService "github.com/thesahibnanda-max/eCommerce/backend/package/services/admin_operations"
 	cartsService "github.com/thesahibnanda-max/eCommerce/backend/package/services/carts"
+	googleAuthService "github.com/thesahibnanda-max/eCommerce/backend/package/services/google_auth"
 	imagesService "github.com/thesahibnanda-max/eCommerce/backend/package/services/images"
 	ordersService "github.com/thesahibnanda-max/eCommerce/backend/package/services/orders"
 	productsService "github.com/thesahibnanda-max/eCommerce/backend/package/services/products"
@@ -66,6 +67,7 @@ func defaultRules() []httpErrorHandler.Rule {
 		}},
 		{http.StatusConflict, []rule{
 			{snapshotService.ErrAlreadyRunning, "snapshot_running", "a snapshot is already running"},
+			{googleAuthService.ErrNotConnected, "google_not_connected", "connect google drive first"},
 			{usersService.ErrEmailAlreadyExists, "email_already_exists", "email is already registered"},
 			{usersService.ErrPhoneAlreadyExists, "phone_number_already_exists", "phone number is already registered"},
 			{usersService.ErrEmailAlreadyValidated, "email_already_validated", "email is already validated"},
@@ -109,9 +111,12 @@ func defaultRules() []httpErrorHandler.Rule {
 		}},
 		{http.StatusServiceUnavailable, []rule{
 			{adminOperationsService.ErrSnapshotsDisabled, "snapshot_not_configured", "google sheets snapshots are not configured"},
+			{googleAuthService.ErrClosed, "google_unavailable", "google connection is shutting down"},
 		}},
 		{http.StatusBadGateway, []rule{
 			{usersService.ErrOTPSendFailed, "otp_send_failed", "could not send otp"},
+			{googleAuthService.ErrExchangeFailed, "google_exchange_failed", "google sign-in could not be completed"},
+			{googleAuthService.ErrNoRefreshToken, "google_no_refresh_token", "google did not return a refresh token, remove the app's access in your google account and connect again"},
 			{paymentGateway.ErrProviderFailed, "payment_provider_failed", "payment provider is unavailable, try again"},
 		}},
 		{http.StatusBadRequest, []rule{
@@ -172,6 +177,9 @@ func defaultRules() []httpErrorHandler.Rule {
 			{paymentGateway.ErrNoteInvalid, "note_invalid", "note must be at most 300 characters"},
 			{paymentGateway.ErrWebhookInvalid, "webhook_invalid", "webhook payload is invalid"},
 			{paymentGateway.ErrRedirectInvalid, "redirect_invalid", "redirect query is invalid"},
+			{googleAuthService.ErrURLInvalid, "google_url_invalid", "return url must be an absolute http or https url"},
+			{googleAuthService.ErrStateInvalid, "google_state_invalid", "google sign-in link expired, start again"},
+			{googleAuthService.ErrConsentDenied, "google_consent_denied", "google access was not granted"},
 			{usersRepository.ErrIDInvalid, "id_invalid", "id is invalid"},
 			{usersRepository.ErrLimitInvalid, "limit_invalid", "limit is invalid"},
 			{usersRepository.ErrOffsetInvalid, "offset_invalid", "offset is invalid"},

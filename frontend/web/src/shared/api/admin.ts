@@ -256,3 +256,15 @@ export function adminSnapshotStatus(
 export function adminRunSnapshot(adminKey: string): Promise<SnapshotStatus> {
   return request<SnapshotStatus>('/admin/snapshot', { method: 'POST', adminKey })
 }
+
+export function adminConnectGoogle(adminKey: string, returnURL: string): Promise<string> {
+  return request<{ auth_url: string }>('/admin/google/connect', {
+    method: 'POST',
+    adminKey,
+    body: { return_url: returnURL },
+  }).then((data) => data.auth_url)
+}
+
+export function adminDisconnectGoogle(adminKey: string): Promise<SnapshotStatus> {
+  return request<SnapshotStatus>('/admin/google', { method: 'DELETE', adminKey })
+}
